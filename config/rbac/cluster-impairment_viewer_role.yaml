@@ -1,0 +1,20 @@
+# permissions for end users to view cluster-impairments.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-impairment-viewer-role
+rules:
+- apiGroups:
+  - impairment.redhat.com.redhat.com
+  resources:
+  - cluster-impairments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - impairment.redhat.com.redhat.com
+  resources:
+  - cluster-impairments/status
+  verbs:
+  - get
