@@ -1,0 +1,73 @@
+#apiVersion: apps/v1
+#kind: DaemonSet
+#metadata:
+#  name: cluster-impairment-initializer
+#  namespace: default
+#  labels:
+#    k8s-app: cluster-impairment
+#spec:
+#  selector:
+#    matchLabels:
+#      name: cluster-impairment-init
+#  template:
+#    metadata:
+#      labels:
+#        name: cluster-impairment-init
+#    spec:
+#      containers:
+#      - name: cluster-impairment-init
+#        image: quay.io/joconnel/tc:latest
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cluster-impairment-initializer
+  namespace: default
+  labels:
+    k8s-app: cluster-impairment
+spec:
+  selector:
+    matchLabels:
+      name: cluster-impairment
+  template:
+    metadata:
+      labels:
+        name: cluster-impairment
+    spec:
+      initContainers:
+        - name: impairment-worker
+          image: quay.io/joconnel/cluster-impairment-operator-worker
+          env:
+          - name: INTERFACE
+            value: "ens2f0"
+          - name: BANDWIDTH_LIMIT
+            value: "1000"
+          - name: DURATION
+            value: "60"
+          - name: LATENCY
+            value: "500"
+          - name: IMPAIRMENT_DIRECTION
+            value: "Both"
+      #    - name: DRY_RUN
+      #      value: "True"
+          securityContext:
+            privileged: true
+          volumeMounts:
+          - mountPath: /lib/modules
+            name: modprobe-modules-dir
+      containers:
+        - name: pause
+          image: gcr.io/google_containers/pause
+          resources:
+            limits:
+              cpu: 50m
+              memory: 50Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi
+  hostNetwork: true
+  dnsPolicy: Default
+  volumes:
+  - name: modprobe-modules-dir
+    hostPath:
+      path: /lib/modules

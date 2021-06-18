@@ -2,7 +2,7 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: cluster-impairments.impairment.redhat.com.redhat.com
+  name: cluster-impairments.impairment.redhat.com
 spec:
   group: impairment.redhat.com.redhat.com
   names:

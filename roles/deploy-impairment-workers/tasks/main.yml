@@ -1,0 +1,13 @@
+---
+# tasks file for deploy-impairment-workers
+#- name: Create namespace
+#  k8s:
+#    api_version: v1
+#    kind: Namespace
+#    name: "cluster-impairment-operator-system"
+
+- name: Deploy Daemonset
+  k8s:
+    definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
+#  vars:
+#    student_number: "{{ item }}"

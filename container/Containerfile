@@ -1,0 +1,7 @@
+FROM centos:8
+
+RUN yum install iproute-tc python3 net-tools -y
+
+COPY apply-impairments.py /
+
+ENTRYPOINT python3 apply-impairments.py
