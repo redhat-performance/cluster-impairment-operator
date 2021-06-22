@@ -23,7 +23,7 @@ spec:
           - name: BANDWIDTH_LIMIT
             value: "1000"
           - name: DURATION
-            value: "10"
+            value: "8"
           - name: LATENCY
             value: "500"
           - name: IMPAIRMENT_DIRECTION
@@ -45,9 +45,9 @@ spec:
             requests:
               cpu: 50m
               memory: 50Mi
-  hostNetwork: true
-  dnsPolicy: Default
-  volumes:
-  - name: modprobe-modules-dir
-    hostPath:
-      path: /lib/modules
+      volumes:
+      - name: modprobe-modules-dir
+        hostPath:
+          path: /lib/modules
+      hostNetwork: true
+      dnsPolicy: Default

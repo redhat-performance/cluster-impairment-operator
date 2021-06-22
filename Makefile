@@ -29,14 +29,14 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 #
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
 # redhat.com/cluster-impairment-operator-bundle:$VERSION and redhat.com/cluster-impairment-operator-catalog:$VERSION.
-IMAGE_TAG_BASE ?= redhat.com/cluster-impairment-operator
+IMAGE_TAG_BASE ?= quay.io/joconnel
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
 BUNDLE_IMG ?= $(IMAGE_TAG_BASE)-bundle:v$(VERSION)
 
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= quay.io/joconnel/cluster-impairment-operator:latest
 
 all: docker-build
 
@@ -62,10 +62,11 @@ run: ansible-operator ## Run against the configured Kubernetes cluster in ~/.kub
 	$(ANSIBLE_OPERATOR) run
 
 docker-build: ## Build docker image with the manager.
-	docker build -t ${IMG} .
+	podman build -t ${IMG} .
 
 docker-push: ## Push docker image with the manager.
-	docker push ${IMG}
+	podman push ${IMG}
+#        echo 'Pushing to ${IMG}'
 
 ##@ Deployment
 

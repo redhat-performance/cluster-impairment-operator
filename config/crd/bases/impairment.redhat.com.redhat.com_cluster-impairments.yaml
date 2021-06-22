@@ -4,7 +4,7 @@ kind: CustomResourceDefinition
 metadata:
   name: cluster-impairments.impairment.redhat.com
 spec:
-  group: impairment.redhat.com.redhat.com
+  group: impairment.redhat.com
   names:
     kind: Cluster-impairment
     listKind: Cluster-impairmentList
