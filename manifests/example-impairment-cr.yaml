@@ -3,4 +3,5 @@ kind: ClusterImpairment
 metadata:
   name: test-impairment-cr
 spec:
-  impairment_duration: 6
+  impairment_duration: 60
+  impairment_loss: 80

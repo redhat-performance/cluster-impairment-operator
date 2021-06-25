@@ -40,7 +40,7 @@
     - name: Deploy Daemonset
       k8s:
         definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
-    #    wait: yes
+        wait: yes
     #    wait_condition:
     #      type: Complete
     #      status: "True"

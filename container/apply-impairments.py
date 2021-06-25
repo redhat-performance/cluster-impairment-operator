@@ -10,8 +10,8 @@ Variables:
 - LATENCY: Latency in ms to apply. 0 to disable. Default 0.
 - PACKET_LOSS: Percent packet loss (0-100). 0 to disable. Default 0.
 - BANDWIDTH_LIMIT: The bandwidth limit in kbits. 0 to disable. Default 0.
-- IMPAIRMENT_DIRECTION: Inbound, Outbound, or Both. Default Outbound.
-                        Uses ifb for outbound impairments (a kernel module).
+- IMPAIRMENT_DIRECTION: ingress, egress, or both. Default egress.
+                        Uses ifb for ingress impairments (a kernel module).
 """
 
 
@@ -91,7 +91,7 @@ def parse_tc_netem_args():
   args = {}
 
   latency_evar = int(os.environ.get("LATENCY", 0))
-  packet_loss_evar = int(os.environ.get("PACKET_LOSS", 0))
+  packet_loss_evar = float(os.environ.get("PACKET_LOSS", 0))
   bandwidth_limit_evar = int(os.environ.get("BANDWIDTH_LIMIT", 0))
   logger.info(bandwidth_limit_evar)
   if latency_evar > 0:
@@ -167,13 +167,13 @@ def main():
   duration = int(os.environ.get("DURATION", 60)) # Seconds
   inbound_interface = os.environ.get("INTERFACE", "ens1f1")
   dry_run = os.environ.get("DRY_RUN", "False") == "True"
-  impairment_direction = os.environ.get("IMPAIRMENT_DIRECTION", "Outbound")
+  impairment_direction = os.environ.get("IMPAIRMENT_DIRECTION", "egress")
 
   if len(netem_impairments):
     interfaces = []
-    if impairment_direction != "Inbound":
+    if impairment_direction.lower() != "ingress":
       interfaces.append(inbound_interface)
-    if impairment_direction != "Outbound":
+    if impairment_direction.lower() != "egress":
       interfaces.append("ifb0")
 
     # Remove, just in case.

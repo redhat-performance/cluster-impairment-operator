@@ -2,4 +2,9 @@
 # defaults file for deploy-impairment-workers
 ansible_python_interpreter: /usr/bin/python3.8
 
-impairment_duration: 8
+impairment_duration: 8 # seconds
+impairment_interface: "ens2f0"
+impairment_direction: "egress"
+impairment_bandwidth: 1000 # kbit
+impairment_latency: 150 # ms
+impairment_loss: 0.02 # percent

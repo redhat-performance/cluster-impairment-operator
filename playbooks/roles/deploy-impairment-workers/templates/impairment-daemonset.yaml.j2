@@ -19,17 +19,17 @@ spec:
           image: quay.io/joconnel/cluster-impairment-operator-worker
           env:
           - name: INTERFACE
-            value: "ens2f0"
+            value: "{{ impairment_interface }}"
           - name: BANDWIDTH_LIMIT
-            value: "1000"
+            value: "{{ impairment_bandwidth }}"
           - name: DURATION
             value: "{{ impairment_duration }}"
           - name: LATENCY
-            value: "500"
+            value: "{{ impairment_latency }}"
           - name: IMPAIRMENT_DIRECTION
-            value: "Both"
-      #    - name: DRY_RUN
-      #      value: "True"
+            value: "{{ impairment_direction }}"
+          - name: PACKET_LOSS
+            value: "{{ impairment_loss }}"
           securityContext:
             privileged: true
           volumeMounts:
