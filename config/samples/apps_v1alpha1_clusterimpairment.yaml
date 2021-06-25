@@ -1,6 +1,7 @@
 apiVersion: apps.redhat.com/v1alpha1
 kind: ClusterImpairment
 metadata:
-  name: test-impairment-cr
+  name: clusterimpairment-sample
 spec:
-  impairment_duration: 6
+  # Add fields here
+  foo: bar

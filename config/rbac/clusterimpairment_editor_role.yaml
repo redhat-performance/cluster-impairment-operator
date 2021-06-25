@@ -1,0 +1,24 @@
+# permissions for end users to edit clusterimpairments.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clusterimpairment-editor-role
+rules:
+- apiGroups:
+  - apps.redhat.com
+  resources:
+  - clusterimpairments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps.redhat.com
+  resources:
+  - clusterimpairments/status
+  verbs:
+  - get

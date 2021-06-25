@@ -1,0 +1,7 @@
+---
+# Use the 'create api' subcommand to add watches to this file.
+- version: impairment.redhat.com/v1alpha1
+  group: impairment.redhat.com.redhat.com
+  kind: Cluster-impairment
+  playbook: playbooks/deploy-impairments.yml
+#+kubebuilder:scaffold:watch

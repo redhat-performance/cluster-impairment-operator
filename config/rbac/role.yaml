@@ -54,4 +54,21 @@ rules:
       - patch
       - update
       - watch
+  ##
+  ## Rules for apps.redhat.com/v1alpha1, Kind: ClusterImpairment
+  ##
+  - apiGroups:
+      - apps.redhat.com
+    resources:
+      - clusterimpairments
+      - clusterimpairments/status
+      - clusterimpairments/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
 #+kubebuilder:scaffold:rules

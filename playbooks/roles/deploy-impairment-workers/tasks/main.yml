@@ -5,47 +5,87 @@
 #    api_version: v1
 #    kind: Namespace
 #    name: "cluster-impairment-operator-system"
-- name: Install dependencies
-  pip:
-    name:
-      - openshift
-      - kubernetes
+- debug:
+    msg: "Running main task for ClusterImpairment {{ ansible_operator_meta.name }} in namespace {{ ansible_operator_meta.namespace }}"
 
-- name: Deploy Daemonset
-  k8s:
-    definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
-#    wait: yes
-#    wait_condition:
-#      type: Complete
-#      status: "True"
+- name: Get ClusterImpairment status
+  k8s_info:
+    api_version: apps.redhat.com/v1alpha1
+    kind: ClusterImpairment
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+  register: impairment_facts
+
+- debug:
+    var: impairment_facts
+
+- name: Run impairments
+  when: "('status' not in impairment_facts.resources[0]) or 'run_status' not in impairment_facts.resources[0]['status']" #or impairment_facts.resources['status']['run_status'] == 'not_run'"
+  block:
+    - name: Mark as running
+      operator_sdk.util.k8s_status:
+        api_version: apps.redhat.com/v1alpha1
+        kind: ClusterImpairment
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          run_status: "running"
+
+    - name: Install dependencies
+      pip:
+        name:
+          - openshift
+          - kubernetes
+
+    - name: Deploy Daemonset
+      k8s:
+        definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
+    #    wait: yes
+    #    wait_condition:
+    #      type: Complete
+    #      status: "True"
     
-#  vars:
-#    student_number: "{{ item }}"
+    #  vars:
+    #    student_number: "{{ item }}"
 
-#- name: Get info about the daemonset pods
-#  k8s_info:
-#    kind: Pod
-#    label_selectors:
-#      - name = cluster-impairment
-#    namespace: default
-#  register: daemonset_pod_instances
+    #- name: Get info about the daemonset pods
+    #  k8s_info:
+    #    kind: Pod
+    #    label_selectors:
+    #      - name = cluster-impairment
+    #    namespace: default
+    #  register: daemonset_pod_instances
 
 
-#- debug:
-#    var: daemonset_pod_instances
+    #- debug:
+    #    var: daemonset_pod_instances
 
-- pause:
-    seconds: 2
+    #- pause:
+    #    seconds: 2
 
-- name: Wait for pods to be ready
-  command: >
-    oc wait --for=condition=Ready
-    pods -l name=cluster-impairment --timeout=60s
+    #- name: Wait for pods to be ready
+    #  command: >
+    #    oc wait --for=condition=Ready
+    #    pods -l name=cluster-impairment --timeout=60s
 
-- name: Remove Daemonset
-  k8s:
-    state: absent
-#    kind: Daemonset
-#    name: cluster-impairment-initializer
-#    namespace: default
-    definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
+    - name: Wait for pods to be ready
+      pause:
+        seconds: "{{ impairment_duration }}"
+
+    - name: Remove Daemonset
+      k8s:
+        state: absent
+    #    kind: Daemonset
+    #    name: cluster-impairment-initializer
+    #    namespace: default
+        definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
+
+- name: Mark as complete
+  operator_sdk.util.k8s_status:
+    api_version: apps.redhat.com/v1alpha1
+    kind: ClusterImpairment
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    status:
+      run_status: "complete"
+

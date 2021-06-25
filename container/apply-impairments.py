@@ -241,5 +241,9 @@ def main():
   else:
     logger.info("No impairments")
 
+  # Sleep until ended
+  while running:
+    time.sleep(0.1)
+
 if __name__ == '__main__':
   sys.exit(main())
