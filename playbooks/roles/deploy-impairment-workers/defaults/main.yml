@@ -2,7 +2,8 @@
 # defaults file for deploy-impairment-workers
 ansible_python_interpreter: /usr/bin/python3.8
 
-impairment_duration: 8 # seconds
+impairment_duration: 30 # seconds
+impairment_delay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
 impairment_interface: "ens2f0"
 impairment_direction: "egress"
 impairment_bandwidth: 1000 # kbit

@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: yes
   collections:
     - community.kubernetes
     - operator_sdk.util

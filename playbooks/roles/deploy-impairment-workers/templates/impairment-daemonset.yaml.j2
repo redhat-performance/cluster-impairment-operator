@@ -4,15 +4,15 @@ metadata:
   name: cluster-impairment-initializer
   namespace: default
   labels:
-    k8s-app: cluster-impairment
+    k8s-app: cluster-impairment-initializer
 spec:
   selector:
     matchLabels:
-      name: cluster-impairment
+      name: cluster-impairment-initializer
   template:
     metadata:
       labels:
-        name: cluster-impairment
+        name: cluster-impairment-initializer
     spec:
       containers:
         - name: impairment-worker
@@ -22,14 +22,18 @@ spec:
             value: "{{ impairment_interface }}"
           - name: BANDWIDTH_LIMIT
             value: "{{ impairment_bandwidth }}"
-          - name: DURATION
-            value: "{{ impairment_duration }}"
+#          - name: DURATION
+#            value: "{{ impairment_duration }}"
           - name: LATENCY
             value: "{{ impairment_latency }}"
           - name: IMPAIRMENT_DIRECTION
             value: "{{ impairment_direction }}"
           - name: PACKET_LOSS
             value: "{{ impairment_loss }}"
+          - name: START_TIME
+            value: "{{ start_time_epoch }}"
+          - name: END_TIME
+            value: "{{ end_time_epoch }}"
           securityContext:
             privileged: true
           volumeMounts:

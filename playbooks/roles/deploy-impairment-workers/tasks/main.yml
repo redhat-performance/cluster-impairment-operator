@@ -1,10 +1,5 @@
 #---
 # tasks file for deploy-impairment-workers
-#- name: Create namespace
-#  k8s:
-#    api_version: v1
-#    kind: Namespace
-#    name: "cluster-impairment-operator-system"
 - debug:
     msg: "Running main task for ClusterImpairment {{ ansible_operator_meta.name }} in namespace {{ ansible_operator_meta.namespace }}"
 
@@ -37,6 +32,17 @@
           - openshift
           - kubernetes
 
+    - name: Calculate start time epoch
+      set_fact:
+        start_time_epoch: "{{ (ansible_date_time.epoch | int) + (impairment_delay | int) }}"
+
+    - name: Calculate end time epoch
+      set_fact:
+        end_time_epoch: "{{ (start_time_epoch | int) + (impairment_duration | int) }}"
+
+    - debug:
+        var: end_time_epoch
+
     - name: Deploy Daemonset
       k8s:
         definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
@@ -68,16 +74,13 @@
     #    oc wait --for=condition=Ready
     #    pods -l name=cluster-impairment --timeout=60s
 
-    - name: Wait for pods to be ready
+    - name: Wait for pods to finish
       pause:
-        seconds: "{{ impairment_duration }}"
+        seconds: "{{ impairment_duration + impairment_delay + 6}}"
 
     - name: Remove Daemonset
       k8s:
         state: absent
-    #    kind: Daemonset
-    #    name: cluster-impairment-initializer
-    #    namespace: default
         definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
 
 - name: Mark as complete

@@ -5,7 +5,10 @@ specified impairments.
 The interface and impairments are passed in using environment variables.
 
 Variables:
-- DURATION: Duration in seconds as int. Default: 60
+- DURATION: Duration in seconds as int. Default: 60 (if no END_TIME set)
+- START_TIME: The timestamp (epoch) when the impairment is supposed to start.
+              Default: Current timestamp at time script is run.
+- END_TIME: The timestamp (epoch) when the impairment will end. Overrides duration.
 - INTERFACE: The interface to apply impairments. Default: ens1f1
 - LATENCY: Latency in ms to apply. 0 to disable. Default 0.
 - PACKET_LOSS: Percent packet loss (0-100). 0 to disable. Default 0.
@@ -164,16 +167,23 @@ def main():
 
   start_time = time.time()
   netem_impairments = parse_tc_netem_args()
-  duration = int(os.environ.get("DURATION", 60)) # Seconds
+  duration = int(os.environ.get("DURATION", -1)) # Seconds
+  start_time = int(os.environ.get("START_TIME", time.time())) # Epoch
+  end_time = int(os.environ.get("END_TIME", -1)) # Epoch
   inbound_interface = os.environ.get("INTERFACE", "ens1f1")
   dry_run = os.environ.get("DRY_RUN", "False") == "True"
-  impairment_direction = os.environ.get("IMPAIRMENT_DIRECTION", "egress")
+  impairment_direction = os.environ.get("IMPAIRMENT_DIRECTION", "egress").lower()
+
+  if end_time == -1:
+    if duration == -1:
+      duration = 60
+    end_time = start_time + duration
 
   if len(netem_impairments):
     interfaces = []
-    if impairment_direction.lower() != "ingress":
+    if impairment_direction != "ingress":
       interfaces.append(inbound_interface)
-    if impairment_direction.lower() != "egress":
+    if impairment_direction != "egress":
       interfaces.append("ifb0")
 
     # Remove, just in case.
@@ -183,8 +193,18 @@ def main():
       True)
     remove_ifb(inbound_interface, dry_run)
 
-    if impairment_direction != "Outbound":
+    if impairment_direction != "egress":
       setup_ifb(inbound_interface, dry_run)
+
+    current_time = time.time()
+
+    if current_time < start_time and running:
+      logger.info("Waiting to run impairments")
+    while current_time < start_time and running:
+      time.sleep(.1)
+      current_time = time.time()
+
+    logger.info("Running impairments")
 
     apply_tc_netem(
         interfaces,
@@ -199,9 +219,7 @@ def main():
 #      links_down = True
 
     wait_logger = 0
-    impairment_expected_end_time = time.time() + duration
-    current_time = time.time()
-    while current_time < impairment_expected_end_time and running:
+    while current_time < end_time and running:
 #      if flap_links:
 #        if current_time >= next_flap_time:
 #          if links_down:
@@ -219,7 +237,7 @@ def main():
       time.sleep(.1)
       wait_logger += 1
       if wait_logger >= 100:
-        logger.info("Remaining impairment duration: {}".format(round(impairment_expected_end_time - current_time, 1)))
+        logger.info("Remaining impairment duration: {}".format(round(end_time - current_time, 1)))
         wait_logger = 0
       current_time = time.time()
 
@@ -235,7 +253,7 @@ def main():
       interfaces,
       dry_run)
 
-    if impairment_direction != "Outbound":
+    if impairment_direction != "egress":
       remove_ifb(inbound_interface, dry_run)
 
   else:
