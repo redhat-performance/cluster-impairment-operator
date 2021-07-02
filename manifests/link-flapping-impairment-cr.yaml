@@ -1,0 +1,15 @@
+apiVersion: apps.redhat.com/v1alpha1
+kind: ClusterImpairment
+metadata:
+  name: test-impairment-cr
+#  namespace: cluster-impairment-operator-system
+spec:
+  impairment_duration: 30
+  impairment_delay: 5
+  impairment_latency: 0
+  impairment_loss: 0
+  impairment_bandwidth: 0
+  impairment_direction: "egress"
+  impairment_link_flapping: true
+  impairment_link_flap_down_time: 3
+  impairment_link_flap_up_time: 3
