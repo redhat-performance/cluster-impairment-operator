@@ -12,7 +12,12 @@ spec:
     singular: clusterimpairment
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - description: Run status
+      jsonPath: .status.run_status
+      name: Status
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: ClusterImpairment is the Schema for the clusterimpairments API
