@@ -10,7 +10,7 @@ spec:
     listKind: ClusterImpairmentList
     plural: clusterimpairments
     singular: clusterimpairment
-  scope: Namespaced
+  scope: Cluster
   versions:
   - additionalPrinterColumns:
     - description: Run status
@@ -46,4 +46,5 @@ spec:
     served: true
     storage: true
     subresources:
-      status: {}
+      status:
+        run_status: not_run

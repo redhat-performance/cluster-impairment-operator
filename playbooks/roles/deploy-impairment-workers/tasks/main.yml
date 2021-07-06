@@ -15,7 +15,7 @@
     var: impairment_facts
 
 - name: Run impairments
-  when: "('status' not in impairment_facts.resources[0]) or 'run_status' not in impairment_facts.resources[0]['status']" #or impairment_facts.resources['status']['run_status'] == 'not_run'"
+  when: "('status' not in impairment_facts.resources[0]) or 'run_status' not in impairment_facts.resources[0]['status'] or impairment_facts.resources[0]['status']['run_status'] == 'not_run'"
   block:
     - name: Mark as running
       operator_sdk.util.k8s_status:
