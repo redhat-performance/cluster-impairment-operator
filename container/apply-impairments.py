@@ -155,7 +155,7 @@ def remove_ifb(interface, dry_run):
   command(["ip", "link", "set", "dev", "ifb0", "down"], dry_run)
   command(["modprobe", "-r", "ifb"], dry_run)
 
-def flap_links(interface, up, dry_run, ignore_errors=False):
+def set_flap_links(interface, up, dry_run, ignore_errors=False):
   logger.info("Flapping links " + up)
   ip_command = ["ip", "link", "set", interface, up]
   rc, _ = command(ip_command, dry_run)
@@ -198,6 +198,14 @@ def main():
     logger.warn("No impairments. Exiting")
     return
 
+  current_time = time.time()
+
+  if current_time < start_time and running:
+    logger.info("Waiting to run impairments")
+  while current_time < start_time and running:
+    time.sleep(.1)
+    current_time = time.time()
+
   if len(netem_impairments):
     interfaces = []
     if impairment_direction != "ingress":
@@ -215,14 +223,6 @@ def main():
     if impairment_direction != "egress":
       setup_ifb(inbound_interface, dry_run)
 
-    current_time = time.time()
-
-    if current_time < start_time and running:
-      logger.info("Waiting to run impairments")
-    while current_time < start_time and running:
-      time.sleep(.1)
-      current_time = time.time()
-
     apply_tc_netem(
         interfaces,
         netem_impairments,
@@ -232,7 +232,7 @@ def main():
 
   if flap_links:
     link_flap_count = 1
-    flap_links(interfaces, "down", dry_run)
+    set_flap_links(inbound_interface, "down", dry_run)
     next_flap_time = time.time() + link_flap_down
     links_down = True
 
@@ -242,12 +242,12 @@ def main():
       if current_time >= next_flap_time:
         if links_down:
           links_down = False
-          flap_links(interface, "up", dry_run)
+          set_flap_links(inbound_interface, "up", dry_run)
           next_flap_time = time.time() + link_flap_up
         else:
           links_down = True
           link_flap_count += 1
-          flap_links(interface, "down", dry_run)
+          set_flap_links(inbound_interface, "down", dry_run)
           next_flap_time = time.time() + link_flap_down
 
     time.sleep(.1)
@@ -261,7 +261,7 @@ def main():
     logger.warn("Ending early due to pod/system termination")
 
   if flap_links:
-    flap_links(interface, "up", dry_run, True)
+    set_flap_links(inbound_interface, "up", dry_run, True)
 
   if len(netem_impairments):
     # Done

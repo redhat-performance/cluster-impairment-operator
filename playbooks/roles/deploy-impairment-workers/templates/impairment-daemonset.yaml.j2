@@ -40,6 +40,8 @@ spec:
             value: "{{ impairment_link_flap_down_time }}"
           - name: LINK_FLAP_UP_TIME
             value: "{{ impairment_link_flap_up_time }}"
+#          - name: DRY_RUN
+#            value: "true"
           securityContext:
             privileged: true
           volumeMounts:

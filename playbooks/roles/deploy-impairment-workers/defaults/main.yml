@@ -9,3 +9,11 @@ impairment_direction: "egress"
 impairment_bandwidth: 1000 # kbit
 impairment_latency: 150 # ms
 impairment_loss: 0.02 # percent
+
+impairment_link_flapping: false
+impairment_link_flap_down_time: 3
+impairment_link_flap_up_time: 3
+
+
+node_selector_key: "node-role.kubernetes.io/worker"
+node_selector_value: ""
