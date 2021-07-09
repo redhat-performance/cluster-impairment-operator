@@ -15,7 +15,7 @@ spec:
         name: cluster-impairment-initializer
     spec:
       nodeSelector:
-        {{ node_selector_key }}: {{ node_selector_value }}
+        "{{ node_selector_key }}": "{{ node_selector_value }}"
       containers:
         - name: impairment-worker
           image: quay.io/joconnel/cluster-impairment-operator-worker

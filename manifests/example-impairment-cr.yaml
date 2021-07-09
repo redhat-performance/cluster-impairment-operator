@@ -3,5 +3,11 @@ kind: ClusterImpairment
 metadata:
   name: test-impairment-cr
 spec:
-  impairment_duration: 60
-  impairment_loss: 80
+  impairment_duration: 30
+  impairment_delay: 15
+  impairment_latency: 30
+  impairment_loss: 0.02
+  # Use quotes for node_selector key and value.
+  node_selector_key: "node-role.kubernetes.io/worker"
+  node_selector_value: ""
+
