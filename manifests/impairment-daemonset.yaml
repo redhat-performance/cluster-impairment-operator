@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
         - name: impairment-worker
-          image: quay.io/joconnel/cluster-impairment-operator-worker
+          image: quay.io/redhat-performance/cluster-impairment-worker
           env:
           - name: INTERFACE
             value: "ens2f0"
@@ -45,9 +45,9 @@ spec:
             requests:
               cpu: 50m
               memory: 50Mi
-  hostNetwork: true
-  dnsPolicy: Default
-  volumes:
-  - name: modprobe-modules-dir
-    hostPath:
-      path: /lib/modules
+      volumes:
+      - name: modprobe-modules-dir
+        hostPath:
+          path: /lib/modules
+      hostNetwork: true
+      dnsPolicy: Default

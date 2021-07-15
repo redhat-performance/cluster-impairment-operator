@@ -18,7 +18,7 @@ spec:
         "{{ node_selector_key }}": "{{ node_selector_value }}"
       containers:
         - name: impairment-worker
-          image: quay.io/joconnel/cluster-impairment-operator-worker
+          image: quay.io/redhat-performance/cluster-impairment-worker
           env:
           - name: INTERFACE
             value: "{{ impairment_interface }}"
