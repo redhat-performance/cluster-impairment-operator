@@ -99,7 +99,6 @@ def parse_tc_netem_args():
   latency_evar = int(os.environ.get("LATENCY", 0))
   packet_loss_evar = float(os.environ.get("PACKET_LOSS", 0))
   bandwidth_limit_evar = int(os.environ.get("BANDWIDTH_LIMIT", 0))
-  logger.info(bandwidth_limit_evar)
   if latency_evar > 0:
     args["latency"] = ["delay", "{}ms".format(latency_evar)]
   if packet_loss_evar > 0:
@@ -175,7 +174,6 @@ def main():
 
   # Now, the impairments
 
-  start_time = time.time()
   netem_impairments = parse_tc_netem_args()
   duration = int(os.environ.get("DURATION", -1)) # Seconds
   start_time = int(os.environ.get("START_TIME", time.time())) # Epoch
@@ -199,6 +197,9 @@ def main():
     return
 
   current_time = time.time()
+
+  logger.info("Set to run for {}s. End time in {}s".format(end_time - start_time,
+    end_time - current_time))
 
   if current_time < start_time and running:
     logger.info("Waiting to run impairments")

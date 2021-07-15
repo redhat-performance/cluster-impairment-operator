@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: cluster-impairment-initializer
-  namespace: default
+  namespace: cluster-impairment-operator
   labels:
     k8s-app: cluster-impairment
 spec:
@@ -14,7 +14,7 @@ spec:
       labels:
         name: cluster-impairment
     spec:
-      initContainers:
+      containers:
         - name: impairment-worker
           image: quay.io/redhat-performance/cluster-impairment-worker
           env:
@@ -35,19 +35,10 @@ spec:
           volumeMounts:
           - mountPath: /lib/modules
             name: modprobe-modules-dir
-      containers:
-        - name: pause
-          image: gcr.io/google_containers/pause
-          resources:
-            limits:
-              cpu: 50m
-              memory: 50Mi
-            requests:
-              cpu: 50m
-              memory: 50Mi
       volumes:
       - name: modprobe-modules-dir
         hostPath:
           path: /lib/modules
       hostNetwork: true
       dnsPolicy: Default
+      serviceAccountName: network-access

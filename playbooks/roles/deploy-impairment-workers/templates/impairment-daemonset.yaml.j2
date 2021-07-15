@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: cluster-impairment-initializer
-  namespace: default
+  namespace: cluster-impairment-operator
   labels:
     k8s-app: cluster-impairment-initializer
 spec:
@@ -55,3 +55,4 @@ spec:
           path: /lib/modules
       hostNetwork: true
       dnsPolicy: Default
+      serviceAccountName: network-access
