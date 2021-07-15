@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: cluster-impairment-initializer
-  namespace: default
+  namespace: cluster-impairment-operator
   labels:
     k8s-app: cluster-impairment-initializer
 spec:
@@ -18,7 +18,7 @@ spec:
         "{{ node_selector_key }}": "{{ node_selector_value }}"
       containers:
         - name: impairment-worker
-          image: quay.io/joconnel/cluster-impairment-operator-worker
+          image: quay.io/redhat-performance/cluster-impairment-worker
           env:
           - name: INTERFACE
             value: "{{ impairment_interface }}"
@@ -34,6 +34,8 @@ spec:
             value: "{{ impairment_loss }}"
           - name: START_TIME
             value: "{{ start_time_epoch }}"
+          - name: END_TIME
+            value: "{{ end_time_epoch }}"
           - name: LINK_FLAPPING
             value: "{{ impairment_link_flapping }}"
           - name: LINK_FLAP_DOWN_TIME
@@ -53,3 +55,4 @@ spec:
           path: /lib/modules
       hostNetwork: true
       dnsPolicy: Default
+      serviceAccountName: network-access
