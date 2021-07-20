@@ -2,18 +2,33 @@
 # defaults file for deploy-impairment-workers
 ansible_python_interpreter: /usr/bin/python3.8
 
-impairment_duration: 30 # seconds
-impairment_delay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
-impairment_interface: "ens2f0"
-impairment_direction: "egress"
-impairment_bandwidth: 1000 # kbit
-impairment_latency: 150 # ms
-impairment_loss: 0.02 # percent
+impairments:
+  duration: 30 # seconds
+  start_delay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
+  interfaces:
+  - "ens2f0"
 
-impairment_link_flapping: false
-impairment_link_flap_down_time: 3
-impairment_link_flap_up_time: 3
+  # Both ingress and egress
+  bandwidth: 0 # kbit
+  latency: 0 # latency
+  loss: 0 # percent
 
+  # ingress and egress overwrite the bidirectional
+  ingress: # uses ifb
+    bandwidth: 0 # kbit
+    latency: 0 # ms
+    loss: 0 # percent
+  egress:
+    bandwidth: 0 #kbit
+    latency: 0 # ms
+    loss: 0 # percent
 
-node_selector_key: "node-role.kubernetes.io/worker"
-node_selector_value: ""
+  link_flapping:
+    enable: false
+    down_time: 3
+    up_time: 3
+
+  node_selector:
+    key: "node-role.kubernetes.io/worker"
+    value: ""
+

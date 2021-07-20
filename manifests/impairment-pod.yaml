@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
+  namespace: cluster-impairment-operator
   name: cluster-impairment-worker
 spec:
   privileged: true
   containers:
   - name: tc
-    image: quay.io/joconnel/cluster-impairment-operator-worker
+    image: quay.io/redhat-performance/cluster-impairment-worker
     env:
     - name: INTERFACE
       value: "ens2f0"
@@ -16,10 +17,10 @@ spec:
       value: "60"
     - name: LATENCY
       value: "500"
-    - name: IMPAIRMENT_DIRECTION
-      value: "Both"
-#    - name: DRY_RUN
-#      value: "True"
+    - name: EGRESS_LATENCY
+      value: "100"
+    - name: DRY_RUN
+      value: "True"
     securityContext:
       privileged: true
 #      allowPrivilegeEscalation: true
@@ -33,4 +34,4 @@ spec:
   - name: modprobe-modules-dir
     hostPath:
       path: /lib/modules
-
+  serviceAccountName: network-access

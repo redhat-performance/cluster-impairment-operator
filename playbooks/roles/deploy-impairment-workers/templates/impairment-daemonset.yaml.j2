@@ -15,33 +15,41 @@ spec:
         name: cluster-impairment-initializer
     spec:
       nodeSelector:
-        "{{ node_selector_key }}": "{{ node_selector_value }}"
+        "{{ impairments['node_selector']['key'] }}": "{{ impairments['node_selector']['value'] }}"
       containers:
         - name: impairment-worker
           image: quay.io/redhat-performance/cluster-impairment-worker
           env:
           - name: INTERFACE
-            value: "{{ impairment_interface }}"
+            value: "{{ impairment_interface_list }}"
           - name: BANDWIDTH_LIMIT
-            value: "{{ impairment_bandwidth }}"
-#          - name: DURATION
-#            value: "{{ impairment_duration }}"
+            value: "{{ impairments['bandwidth'] }}"
           - name: LATENCY
-            value: "{{ impairment_latency }}"
-          - name: IMPAIRMENT_DIRECTION
-            value: "{{ impairment_direction }}"
+            value: "{{ impairments['latency'] }}"
           - name: PACKET_LOSS
-            value: "{{ impairment_loss }}"
+            value: "{{ impairments['loss'] }}"
+          - name: INGRESS_BANDWIDTH_LIMIT
+            value: "{{ impairments['ingress']['bandwidth'] }}"
+          - name: INGRESS_LATENCY
+            value: "{{ impairments['ingress']['latency'] }}"
+          - name: INGRESS_PACKET_LOSS
+            value: "{{ impairments['ingress']['loss'] }}"
+          - name: EGRESS_BANDWIDTH_LIMIT
+            value: "{{ impairments['egress']['bandwidth'] }}"
+          - name: EGRESS_LATENCY
+            value: "{{ impairments['egress']['latency'] }}"
+          - name: EGRESS_PACKET_LOSS
+            value: "{{ impairments['egress']['loss'] }}"
           - name: START_TIME
             value: "{{ start_time_epoch }}"
           - name: END_TIME
             value: "{{ end_time_epoch }}"
           - name: LINK_FLAPPING
-            value: "{{ impairment_link_flapping }}"
+            value: "{{ impairments['link_flapping']['enable'] }}"
           - name: LINK_FLAP_DOWN_TIME
-            value: "{{ impairment_link_flap_down_time }}"
+            value: "{{ impairments['link_flapping']['down_time'] }}"
           - name: LINK_FLAP_UP_TIME
-            value: "{{ impairment_link_flap_up_time }}"
+            value: "{{ impairments['link_flapping']['up_time'] }}"
 #          - name: DRY_RUN
 #            value: "true"
           securityContext:

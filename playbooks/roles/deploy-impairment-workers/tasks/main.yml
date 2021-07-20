@@ -34,11 +34,15 @@
 
     - name: Calculate start time epoch
       set_fact:
-        start_time_epoch: "{{ (ansible_date_time.epoch | int) + (impairment_delay | int) }}"
+        start_time_epoch: "{{ (ansible_date_time.epoch | int) + (impairments['start_delay'] | int) }}"
 
     - name: Calculate end time epoch
       set_fact:
-        end_time_epoch: "{{ (start_time_epoch | int) + (impairment_duration | int) }}"
+        end_time_epoch: "{{ (start_time_epoch | int) + (impairments['duration'] | int) }}"
+
+    - name: Create the list of interfaces
+      set_fact:
+        impairment_interface_list: "{{ impairments['interfaces'] | join(',') }}"
 
     - debug:
         var: end_time_epoch
@@ -76,7 +80,7 @@
 
     - name: Wait for pods to finish
       pause:
-        seconds: "{{ impairment_duration + impairment_delay + 6}}"
+        seconds: "{{ impairments['duration'] + impairments['start_delay'] + 6}}"
 
     - name: Remove Daemonset
       k8s:
