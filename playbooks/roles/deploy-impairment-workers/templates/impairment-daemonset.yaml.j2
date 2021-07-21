@@ -22,34 +22,78 @@ spec:
           env:
           - name: INTERFACE
             value: "{{ impairment_interface_list }}"
+          # Bandwidth
+{% if impairments.bandwidth is defined %}
           - name: BANDWIDTH_LIMIT
-            value: "{{ impairments['bandwidth'] }}"
+            value: "{{ impairments.bandwidth }}"
+{% endif %}
+          # Latency
+{% if impairments.latency is defined %}
           - name: LATENCY
-            value: "{{ impairments['latency'] }}"
+            value: "{{ impairments.latency }}"
+{% endif %}
+          # Packet loss
+{% if impairments.loss is defined %}
           - name: PACKET_LOSS
-            value: "{{ impairments['loss'] }}"
+            value: "{{ impairments.loss }}"
+{% endif %}
+
+          # Ingress
+{% if impairments.ingress is defined %}
+          # Ingress bandwidth
+{% if impairments.ingress.bandwidth is defined %}
           - name: INGRESS_BANDWIDTH_LIMIT
-            value: "{{ impairments['ingress']['bandwidth'] }}"
+            value: "{{ impairments.ingress.bandwidth }}"
+{% endif %}
+          # Ingress latency
+{% if impairments.ingress.latency is defined %}
           - name: INGRESS_LATENCY
-            value: "{{ impairments['ingress']['latency'] }}"
+            value: "{{ impairments.ingress.latency }}"
+{% endif %}
+          # Ingress packet loss
+{% if impairments.ingress.loss is defined %}
           - name: INGRESS_PACKET_LOSS
-            value: "{{ impairments['ingress']['loss'] }}"
+            value: "{{ impairments.ingress.loss }}"
+{% endif %}
+{% endif %}
+          # Egress
+{% if impairments.egress is defined %}
+          # Egress bandwidth
+{% if impairments.egress.bandwidth is defined %}
           - name: EGRESS_BANDWIDTH_LIMIT
-            value: "{{ impairments['egress']['bandwidth'] }}"
+            value: "{{ impairments.egress.bandwidth }}"
+{% endif %}
+          # Egress latency
+{% if impairments.egress.latency is defined %}
           - name: EGRESS_LATENCY
-            value: "{{ impairments['egress']['latency'] }}"
+            value: "{{ impairments.egress.latency }}"
+{% endif %}
+          # Egress packet loss
+{% if impairments.egress.loss is defined %}
           - name: EGRESS_PACKET_LOSS
-            value: "{{ impairments['egress']['loss'] }}"
+            value: "{{ impairments.egress.loss }}"
+{% endif %}
+{% endif %}
+
           - name: START_TIME
             value: "{{ start_time_epoch }}"
           - name: END_TIME
             value: "{{ end_time_epoch }}"
+          # Link Flapping Enabled
+{% if impairments.link_flapping.enable is defined %}
           - name: LINK_FLAPPING
-            value: "{{ impairments['link_flapping']['enable'] }}"
+            value: "{{ impairments.link_flapping.enable }}"
+{% endif %}
+          # Link Flapping Down Time
+{% if impairments.link_flapping.down_time is defined %}
           - name: LINK_FLAP_DOWN_TIME
-            value: "{{ impairments['link_flapping']['down_time'] }}"
+            value: "{{ impairments.link_flapping.down_time }}"
+{% endif %}
+          # Link Flapping Up Time
+{% if impairments.link_flapping.up_time is defined %}
           - name: LINK_FLAP_UP_TIME
-            value: "{{ impairments['link_flapping']['up_time'] }}"
+            value: "{{ impairments.link_flapping.up_time }}"
+{% endif %}
 #          - name: DRY_RUN
 #            value: "true"
           securityContext:
