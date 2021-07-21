@@ -18,7 +18,7 @@ Traffic Direction:
 | Packet Loss   | The percent of packets that are dropped | percent | Yes        |
 | Link Flapping | Turns the interface on and off          | bool    | No         |
 
-On the tested environment (RHEL 8.4), the impairments can be used alongside link flapping.
+On the tested environment (RHEL CoreOS 48.84), the impairments can be used alongside link flapping.
 
 
 ## Configuration
