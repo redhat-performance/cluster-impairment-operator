@@ -1,0 +1,5 @@
+namespace: cluster-impairment-operator
+resources:
+- namespace.yaml
+- network_service_account.yaml
+- network_scc.yaml

@@ -16,7 +16,3 @@ resources:
 - auth_proxy_role.yaml
 - auth_proxy_role_binding.yaml
 - auth_proxy_client_clusterrole.yaml
-# The following two lines are so the playbook has permission
-# to deploy its daemonset
-- network_service_account.yaml
-- network_scc.yaml

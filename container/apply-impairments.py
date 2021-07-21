@@ -244,11 +244,13 @@ def main():
     if len(ingress_netem_impairments):
       setup_ifb(egress_interfaces, dry_run)
 
-    apply_tc_netem(
+    if len(ingress_netem_impairments):
+      apply_tc_netem(
         ingress_interfaces,
         ingress_netem_impairments,
         dry_run)
-    apply_tc_netem(
+    if len(egress_netem_impairments):
+      apply_tc_netem(
         egress_interfaces,
         egress_netem_impairments,
         dry_run)
