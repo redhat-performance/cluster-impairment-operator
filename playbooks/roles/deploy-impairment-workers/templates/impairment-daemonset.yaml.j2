@@ -14,8 +14,10 @@ spec:
       labels:
         name: cluster-impairment-initializer
     spec:
+{% if impairments.node_selector is defined %}
       nodeSelector:
-        "{{ impairments['node_selector']['key'] }}": "{{ impairments['node_selector']['value'] }}"
+        "{{ impairments.node_selector.key }}": "{{ impairments.node_selector.value }}"
+{% endif %}
       containers:
         - name: impairment-worker
           image: quay.io/redhat-performance/cluster-impairment-worker
