@@ -11,7 +11,7 @@ Traffic Direction:
 
 ### Impairments
 
-| Impairment    | Description                             | Unit    | Uses Netem | 
+| Impairment    | Description                             | Unit    | Uses Netem |
 |---------------|-----------------------------------------|---------|------------|
 | Bandwidth     | The bandwidth limit                     | kbit/s  | Yes        |
 | Latency       | The delay of the packets                | ms      | Yes        |
@@ -59,7 +59,7 @@ spec:
 
 The interfaces configuration option is a list of all interfaces that the impairments should be applied to. The current implementation will error out once it hits an invalid interface.
 
-In many cases, 
+In many cases,
 
 If an invalid interface is found, it will print out the list of interfaces.
 
@@ -67,13 +67,13 @@ If an invalid interface is found, it will print out the list of interfaces.
 
 There is a limit and minimum of one node selector. The default node selector is all worker nodes, but you can change it to whatever node selector you want by setting the key and value.
 
-Note: The daemonset is not setup to work on worker nodes, so even if the node selector matches master nodes, it will not apply to them.
+Note: The daemonset is not setup to work on master nodes, so even if the node selector matches master nodes, it will not apply to them.
 
 #### Duration
 
 The duration the script runs. It will try to sync the start and end time between all pods.
 
-If the script is link flapping, set this to be short enough so that you 
+If the script is link flapping, set this to be short enough so that you
 
 #### Start Delay
 
@@ -83,7 +83,7 @@ You can also utilize this feature to run an impairment after another. Just apply
 
 #### Ingress and Egress
 
-The configuraiton sections "ingress" and "egress" apply to each direction. They override the bidirectional values that are outside of these sections.
+The configuration sections "ingress" and "egress" apply to each direction. They override the bidirectional values that are outside of these sections.
 
 ##### Examples:
 
@@ -104,7 +104,7 @@ spec:
 ```
 
 **Example 2**
-In this example, link flapping will be enabled, and it will turn the interface on and off every 2 minutes. That is long enough for kubernetes to determine that a node is offline.
+In this example, link flapping will be enabled, and it will turn the interface on and off every 2 minutes. That is long enough for kubernetes to determine that a node is unavailable.
 
 ```yaml
 apiVersion: apps.redhat.com/v1alpha1
@@ -122,7 +122,7 @@ spec:
 ```
 
 **Example 3**
-In this example, a realistic set of impairments is applied to ens2f0 and for 30 seconds: 
+In this example, a realistic set of impairments is applied to ens2f0 and for 30 seconds:
 
 ```yaml
 apiVersion: apps.redhat.com/v1alpha1
