@@ -157,6 +157,10 @@ def setup_ifb(interfaces, dry_run):
             "protocol", "ip", "u32", "match", "u32", "0", "0", "flowid",
             "1:1", "action", "mirred", "egress", "redirect", "dev", new_interface],
             dry_run, fail_on_error=True)
+    command(["tc", "filter", "add", "dev", interface, "parent", "ffff:",
+            "protocol", "ipv6", "u32", "match", "u32", "0", "0", "flowid",
+            "1:1", "action", "mirred", "egress", "redirect", "dev", new_interface],
+            dry_run, fail_on_error=True)
 
 def remove_ifb(interfaces, dry_run):
   logger.info("Removing IFB")
