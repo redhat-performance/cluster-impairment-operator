@@ -59,8 +59,6 @@ spec:
 
 The interfaces configuration option is a list of all interfaces that the impairments should be applied to. The current implementation will error out once it hits an invalid interface.
 
-In many cases,
-
 If an invalid interface is found, it will print out the list of interfaces.
 
 #### Node Selector
