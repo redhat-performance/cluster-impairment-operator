@@ -15,7 +15,7 @@
     var: impairment_facts
 
 - name: Run impairments
-  when: "('status' not in impairment_facts.resources[0]) or 'run_status' not in impairment_facts.resources[0]['status'] or impairment_facts.resources[0]['status']['run_status'] == 'not_run'"
+  when: "impairment_facts.resources is defined and (impairment_facts.resources|length) > 0 and (('status' not in impairment_facts.resources[0]) or 'run_status' not in impairment_facts.resources[0]['status'] or impairment_facts.resources[0]['status']['run_status'] == 'not_run')"
   block:
     - name: Mark as running
       operator_sdk.util.k8s_status:
@@ -34,11 +34,12 @@
 
     - name: Calculate start time epoch
       set_fact:
-        start_time_epoch: "{{ (ansible_date_time.epoch | int) + (impairments['start_delay'] | int) }}"
+        start_time_epoch: "{{ (ansible_date_time.epoch | int) + (impairments.start_delay | int) }}"
 
     - name: Calculate end time epoch
       set_fact:
-        end_time_epoch: "{{ (start_time_epoch | int) + (impairments['duration'] | int) }}"
+        end_time_epoch: "{{ (start_time_epoch | int) + (impairments.duration | int) }}"
+      when: impairments.duration != -1
 
     - name: Create the list of interfaces
       set_fact:
@@ -51,36 +52,33 @@
       k8s:
         definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
         wait: yes
-    #    wait_condition:
-    #      type: Complete
-    #      status: "True"
-    
-    #  vars:
-    #    student_number: "{{ item }}"
+        wait_timeout: 12
 
-    #- name: Get info about the daemonset pods
-    #  k8s_info:
-    #    kind: Pod
-    #    label_selectors:
-    #      - name = cluster-impairment
-    #    namespace: default
-    #  register: daemonset_pod_instances
+    - name: Calculate total sleep time
+      set_fact:
+        sleep_time: "{{ impairments.duration + impairments.start_delay }}"
+      when: "{{ impairments.duration|int >= 0 }}"
 
-
-    #- debug:
-    #    var: daemonset_pod_instances
-
-    #- pause:
-    #    seconds: 2
-
-    #- name: Wait for pods to be ready
-    #  command: >
-    #    oc wait --for=condition=Ready
-    #    pods -l name=cluster-impairment --timeout=60s
+    - name: Calculate total sleep time with indefinite time
+      set_fact:
+        sleep_time: 31536000 # a year
+      when: "{{ impairments.duration|int == -1 }}"
 
     - name: Wait for pods to finish
-      pause:
-        seconds: "{{ impairments['duration'] + impairments['start_delay'] + 6}}"
+      k8s_info:
+        api_version: apps.redhat.com/v1alpha1
+        kind: ClusterImpairment
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+      register: impairment_facts
+      # Go until either the resource is deleted
+      until: (impairment_facts.resources|length) == 0
+      delay: 4
+      # Retry until the operator would finish anyway.
+      # This will error out, but ignore_errors is yes
+      # # The delay is four seconds, plus the second from the operation itself.
+      retries: "{{ ((sleep_time | int) / 5)|round(0,'ceil')|int }}"
+      ignore_errors: yes
 
     - name: Remove Daemonset
       k8s:
@@ -95,4 +93,5 @@
     namespace: "{{ ansible_operator_meta.namespace }}"
     status:
       run_status: "complete"
+  when: (impairment_facts.resources is defined) and ((impairment_facts.resources|length) > 0) # Resource still exists
 

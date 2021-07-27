@@ -77,10 +77,16 @@ spec:
 {% endif %}
 {% endif %}
 
+# Duration or end time
           - name: START_TIME
             value: "{{ start_time_epoch }}"
+{% if end_time_epoch is defined %}
           - name: END_TIME
             value: "{{ end_time_epoch }}"
+{% else %}
+          - name: DURATION
+            value: "-1"
+{% endif %}
           # Link Flapping Enabled
 {% if impairments.link_flapping.enable is defined %}
           - name: LINK_FLAPPING

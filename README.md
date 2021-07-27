@@ -69,9 +69,10 @@ Note: The daemonset is not setup to work on master nodes, so even if the node se
 
 #### Duration
 
-The duration the script runs. It will try to sync the start and end time between all pods.
+The duration the script runs in seconds. It will try to sync the start and end time between all pods.
+If set to -1, it will run indefinitely (a year), until you remove the ClusterImpairment custom resource. This is good for testing that requires steady impairments.
 
-If the script is link flapping, set this to be short enough so that you
+If the script is link flapping, set this to be short enough so that if the link flap interrupts communication between the nodes, the daemonset will remove itself.
 
 #### Start Delay
 

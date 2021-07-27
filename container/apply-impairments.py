@@ -5,7 +5,7 @@ specified impairments.
 The interface and impairments are passed in using environment variables.
 
 Variables:
-- DURATION: Duration in seconds as int. Default: 60 (if no END_TIME set)
+- DURATION: Duration in seconds as int. -1 for indefinite. Default: 60 (if no END_TIME set)
 - START_TIME: The timestamp (epoch) when the impairment is supposed to start.
               Default: Current timestamp at time script is run.
 - END_TIME: The timestamp (epoch) when the impairment will end. Overrides duration.
@@ -194,7 +194,7 @@ def main():
   bidirectional_netem_impairments = parse_tc_netem_args()
   ingress_netem_impairments = parse_tc_netem_args("INGRESS_", bidirectional_netem_impairments.copy())
   egress_netem_impairments = parse_tc_netem_args("EGRESS_", bidirectional_netem_impairments.copy())
-  duration = int(os.environ.get("DURATION", -1)) # Seconds
+  duration = int(os.environ.get("DURATION", 0)) # Seconds
   start_time = int(os.environ.get("START_TIME", time.time())) # Epoch
   end_time = int(os.environ.get("END_TIME", -1)) # Epoch
   egress_interfaces = os.environ.get("INTERFACE", "ens1f1").split(",")
@@ -204,8 +204,10 @@ def main():
   link_flap_up = int(os.environ.get("LINK_FLAP_UP_TIME", 1))
 
   if end_time == -1:
-    if duration == -1:
+    if duration == 0:
       duration = 60
+    elif duration == -1:
+      duration = 60 * 60 * 24 * 365 # run for a year
     end_time = start_time + duration
 
   has_netem_impairments = (len(ingress_netem_impairments) + len(egress_netem_impairments)) != 0
