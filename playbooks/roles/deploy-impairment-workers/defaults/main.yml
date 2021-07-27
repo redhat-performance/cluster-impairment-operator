@@ -31,7 +31,3 @@ impairments:
     down_time: 3
     up_time: 3
 
-  node_selector:
-    key: "node-role.kubernetes.io/worker"
-    value: ""
-

@@ -14,6 +14,10 @@ spec:
       labels:
         name: cluster-impairment-initializer
     spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
 {% if impairments.node_selector is defined %}
       nodeSelector:
         "{{ impairments.node_selector.key }}": "{{ impairments.node_selector.value }}"
