@@ -92,6 +92,8 @@ metadata:
   name: uneven-latency
 spec:
   impairments:
+    duration: 60
+    start_delay: 5
     interfaces:
     - "ens2f0"
     ingress:
@@ -107,9 +109,11 @@ In this example, link flapping will be enabled, and it will turn the interface o
 apiVersion: apps.redhat.com/v1alpha1
 kind: ClusterImpairment
 metadata:
-  name: 2-min-flap
+  name: two-min-flap
 spec:
   impairments:
+    duration: 480
+    start_delay: 5
     interfaces:
     - "ens2f0"
     link_flapping:
@@ -149,7 +153,7 @@ metadata:
   name: all-impairments
 spec:
   impairments:
-    duration: 30 # seconds
+    duration: 480 # seconds
     start_delay: 5 # seconds
     interfaces:
     - "ens2f0"

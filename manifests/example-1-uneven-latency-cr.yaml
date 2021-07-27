@@ -1,0 +1,18 @@
+apiVersion: apps.redhat.com/v1alpha1
+kind: ClusterImpairment
+metadata:
+  name: uneven-latency
+spec:
+  impairments:
+    duration: 60
+    start_delay: 5
+    interfaces:
+    - "ens2f0"
+    ingress:
+      latency: 10 # ms
+    egress:
+      latency: 100 # ms
+    node_selector:
+      key: "node-role.kubernetes.io/worker"
+      value: ""
+

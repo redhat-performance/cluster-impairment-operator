@@ -2,6 +2,9 @@
 # defaults file for deploy-impairment-workers
 ansible_python_interpreter: /usr/bin/python3.8
 
+default_duration: 30
+default_start_delay: 5
+
 impairments:
   duration: 30 # seconds
   start_delay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run

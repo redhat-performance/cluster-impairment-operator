@@ -34,12 +34,12 @@
 
     - name: Calculate start time epoch
       set_fact:
-        start_time_epoch: "{{ (ansible_date_time.epoch | int) + (impairments.start_delay | int) }}"
+        start_time_epoch: "{{ (ansible_date_time.epoch | int) + (impairments.start_delay|default(default_start_delay) | int) }}"
 
     - name: Calculate end time epoch
       set_fact:
-        end_time_epoch: "{{ (start_time_epoch | int) + (impairments.duration | int) }}"
-      when: impairments.duration != -1
+        end_time_epoch: "{{ (start_time_epoch | int) + (impairments.duration|default(default_duration) | int) }}"
+      when: impairments.duration|default(default_duration) != -1
 
     - name: Create the list of interfaces
       set_fact:
@@ -56,13 +56,13 @@
 
     - name: Calculate total sleep time
       set_fact:
-        sleep_time: "{{ impairments.duration + impairments.start_delay }}"
-      when: "{{ impairments.duration|int >= 0 }}"
+        sleep_time: "{{ impairments.duration|default(default_duration) + impairments.start_delay|default(default_start_delay) }}"
+      when: "{{ impairments.duration|default(default_duration)|int >= 0 }}"
 
     - name: Calculate total sleep time with indefinite time
       set_fact:
         sleep_time: 31536000 # a year
-      when: "{{ impairments.duration|int == -1 }}"
+      when: "{{ impairments.duration|default(default_duration)|int == -1 }}"
 
     - name: Wait for pods to finish
       k8s_info:
