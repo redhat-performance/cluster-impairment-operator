@@ -15,8 +15,6 @@ spec:
       value: "1000"
     - name: DURATION
       value: "60"
-    - name: LATENCY
-      value: "500"
     - name: EGRESS_LATENCY
       value: "100"
     - name: DRY_RUN

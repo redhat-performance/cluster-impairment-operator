@@ -10,16 +10,11 @@ Variables:
               Default: Current timestamp at time script is run.
 - END_TIME: The timestamp (epoch) when the impairment will end. Overrides duration.
 - INTERFACE: Comma separated list of interfaces to apply impairments. Default: ens1f1
-- LATENCY: Bidirectional latency in ms to apply. Round-trip latency is double.
-                        0 to disable. Default 0.
-- PACKET_LOSS: Bidirectional percent packet loss (0-100). 0 to disable. Default 0.
-- BANDWIDTH_LIMIT: Bidirectional bandwidth limit in kbits. 0 to disable. Default 0.
 - LINK_FLAPPING: Whether to turn on and off the interface. (True/False) Default: False
 - LINK_FLAP_DOWN_TIME: Time period to flap link down (Seconds)  Default: 2
 - LINK_FLAP_UP_TIME: Time period to flap link down (Seconds). Default: 2
 
 Directional impairment variables:
-    Overrides the bidirecational options above.
     Uses ifb for ingress impairments (a kernel module).
     0 to disable. Default 0.
 - EGRESS_LATENCY: Outbound latency.
@@ -97,13 +92,14 @@ def command(cmd, dry_run, cmd_directory="", mask_output=False, mask_arg=0, no_lo
     sys.exit(1)
   return return_code, output
 
-def parse_tc_netem_args(prefix = "", args = {}):
+def parse_tc_netem_args(prefix = ""):
   """
   Uses the environment variables to construct an array of params for netem
 
   Currently supports latency, packet loss, and bandwidth limit as documented
   in the module docstring.
   """
+  args = {}
   latency_evar = int(os.environ.get(prefix + "LATENCY", 0))
   packet_loss_evar = float(os.environ.get(prefix + "PACKET_LOSS", 0))
   bandwidth_limit_evar = int(os.environ.get(prefix + "BANDWIDTH_LIMIT", 0))
@@ -191,9 +187,8 @@ def main():
 
   # Now, the impairments
 
-  bidirectional_netem_impairments = parse_tc_netem_args()
-  ingress_netem_impairments = parse_tc_netem_args("INGRESS_", bidirectional_netem_impairments.copy())
-  egress_netem_impairments = parse_tc_netem_args("EGRESS_", bidirectional_netem_impairments.copy())
+  ingress_netem_impairments = parse_tc_netem_args("INGRESS_")
+  egress_netem_impairments = parse_tc_netem_args("EGRESS_")
   duration = int(os.environ.get("DURATION", 0)) # Seconds
   start_time = int(os.environ.get("START_TIME", time.time())) # Epoch
   end_time = int(os.environ.get("END_TIME", -1)) # Epoch

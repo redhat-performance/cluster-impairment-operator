@@ -24,22 +24,6 @@ spec:
           env:
           - name: INTERFACE
             value: "{{ impairment_interface_list }}"
-          # Bandwidth
-{% if impairments.bandwidth is defined %}
-          - name: BANDWIDTH_LIMIT
-            value: "{{ impairments.bandwidth }}"
-{% endif %}
-          # Latency
-{% if impairments.latency is defined %}
-          - name: LATENCY
-            value: "{{ impairments.latency }}"
-{% endif %}
-          # Packet loss
-{% if impairments.loss is defined %}
-          - name: PACKET_LOSS
-            value: "{{ impairments.loss }}"
-{% endif %}
-
           # Ingress
 {% if impairments.ingress is defined %}
           # Ingress bandwidth

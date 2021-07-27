@@ -8,16 +8,13 @@ spec:
     start_delay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
     interfaces:
     - "ens2f0"
-    bandwidth: 0 # kbit
-    latency: 100 # ms
-    loss: 0 # percent
     ingress: # uses ifb
       bandwidth: 0 # kbit
       latency: 10 # ms
       loss: 0 # percent
     egress:
       bandwidth: 0 #kbit
-      latency: 0 # ms
+      latency: 100 # ms
       loss: 0 # percent
     link_flapping:
       enable: false

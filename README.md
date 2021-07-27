@@ -35,16 +35,13 @@ spec:
     start_delay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
     interfaces:
     - "ens2f0"
-    bandwidth: 0 # kbit
-    latency: 100 # ms
-    loss: 0 # percent
     ingress: # uses ifb
       bandwidth: 0 # kbit
       latency: 10 # ms
       loss: 0 # percent
     egress:
       bandwidth: 0 # kbit
-      latency: 0 # ms
+      latency: 100 # ms
       loss: 0 # percent
     link_flapping:
       enable: false
@@ -97,9 +94,10 @@ spec:
   impairments:
     interfaces:
     - "ens2f0"
-    latency: 100 # ms
     ingress:
       latency: 10 # ms
+    egress:
+      latency: 100 # ms
 ```
 
 **Example 2**
@@ -135,7 +133,10 @@ spec:
     interfaces:
     - "ens2f0"
     - "eno1"
-    latency: 50 # ms. Bidirectional, so total of 100ms
+    egress:
+      latency: 50 # ms. Bidirectional, so total of 100ms
+    ingress:
+      latency: 50 # ms. Bidirectional, so total of 100ms
     loss: 0.02 # percent
 ```
 
@@ -152,9 +153,14 @@ spec:
     start_delay: 5 # seconds
     interfaces:
     - "ens2f0"
-    latency: 50 # ms. Bidirectional, so total of 100ms
-    loss: 0.02 # percent
-    bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s
+    egress:
+      latency: 50 # ms. Bidirectional, so total of 100ms
+      loss: 0.02 # percent
+      bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s
+    ingress:
+      latency: 50 # ms. Bidirectional, so total of 100ms
+      loss: 0.02 # percent
+      bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s
     link_flapping:
       enable: true
       down_time: 30 # Seconds
@@ -198,7 +204,8 @@ Once the clusterimpairment type is set, apply it and it will work.
 
 You should avoid any impairment that applies to the same interface on the same node. There are potential conflicts.
 
-Reason: First, if you apply ingress impairments to the same interface, the ifb interface will conflict. Second, the worker pod will attempt to remove all impairments before applying new ones.
+Reason: First, if you apply ingress impairments to the same interface, the ifb interface will conflict. Second, the worker pod will attempt to remove 
+all impairments before applying new ones.
 
 Instead, take advantage of the full control of both ingress and egress impairments from within the same ClusterImpairment resource.
 

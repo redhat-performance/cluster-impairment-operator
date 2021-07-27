@@ -20,11 +20,11 @@ spec:
           env:
           - name: INTERFACE
             value: "ens2f0"
-          - name: BANDWIDTH_LIMIT
+          - name: EGRESS_BANDWIDTH_LIMIT
             value: "1000"
           - name: DURATION
             value: "30"
-          - name: LATENCY
+          - name: EGRESS_LATENCY
             value: "50"
       #    - name: DRY_RUN
       #      value: "True"
