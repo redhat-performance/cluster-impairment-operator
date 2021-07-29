@@ -18,9 +18,9 @@ spec:
       - key: node-role.kubernetes.io/master
         operator: Exists
         effect: NoSchedule
-{% if impairments.node_selector is defined %}
+{% if node_selector is defined %}
       nodeSelector:
-        "{{ impairments.node_selector.key }}": "{{ impairments.node_selector.value }}"
+        "{{ node_selector.key }}": "{{ node_selector.value }}"
 {% endif %}
       containers:
         - name: impairment-worker
@@ -29,39 +29,39 @@ spec:
           - name: INTERFACE
             value: "{{ impairment_interface_list }}"
           # Ingress
-{% if impairments.ingress is defined %}
+{% if ingress is defined %}
           # Ingress bandwidth
-{% if impairments.ingress.bandwidth is defined %}
+{% if ingress.bandwidth is defined %}
           - name: INGRESS_BANDWIDTH_LIMIT
-            value: "{{ impairments.ingress.bandwidth }}"
+            value: "{{ ingress.bandwidth }}"
 {% endif %}
           # Ingress latency
-{% if impairments.ingress.latency is defined %}
+{% if ingress.latency is defined %}
           - name: INGRESS_LATENCY
-            value: "{{ impairments.ingress.latency }}"
+            value: "{{ ingress.latency }}"
 {% endif %}
           # Ingress packet loss
-{% if impairments.ingress.loss is defined %}
+{% if ingress.loss is defined %}
           - name: INGRESS_PACKET_LOSS
-            value: "{{ impairments.ingress.loss }}"
+            value: "{{ ingress.loss }}"
 {% endif %}
 {% endif %}
           # Egress
-{% if impairments.egress is defined %}
+{% if egress is defined %}
           # Egress bandwidth
-{% if impairments.egress.bandwidth is defined %}
+{% if egress.bandwidth is defined %}
           - name: EGRESS_BANDWIDTH_LIMIT
-            value: "{{ impairments.egress.bandwidth }}"
+            value: "{{ egress.bandwidth }}"
 {% endif %}
           # Egress latency
-{% if impairments.egress.latency is defined %}
+{% if egress.latency is defined %}
           - name: EGRESS_LATENCY
-            value: "{{ impairments.egress.latency }}"
+            value: "{{ egress.latency }}"
 {% endif %}
           # Egress packet loss
-{% if impairments.egress.loss is defined %}
+{% if egress.loss is defined %}
           - name: EGRESS_PACKET_LOSS
-            value: "{{ impairments.egress.loss }}"
+            value: "{{ egress.loss }}"
 {% endif %}
 {% endif %}
 
@@ -76,19 +76,19 @@ spec:
             value: "-1"
 {% endif %}
           # Link Flapping Enabled
-{% if impairments.link_flapping.enable is defined %}
+{% if link_flapping.enable is defined %}
           - name: LINK_FLAPPING
-            value: "{{ impairments.link_flapping.enable }}"
+            value: "{{ link_flapping.enable }}"
 {% endif %}
           # Link Flapping Down Time
-{% if impairments.link_flapping.down_time is defined %}
+{% if link_flapping.down_time is defined %}
           - name: LINK_FLAP_DOWN_TIME
-            value: "{{ impairments.link_flapping.down_time }}"
+            value: "{{ link_flapping.down_time }}"
 {% endif %}
           # Link Flapping Up Time
-{% if impairments.link_flapping.up_time is defined %}
+{% if link_flapping.up_time is defined %}
           - name: LINK_FLAP_UP_TIME
-            value: "{{ impairments.link_flapping.up_time }}"
+            value: "{{ link_flapping.up_time }}"
 {% endif %}
 #          - name: DRY_RUN
 #            value: "true"

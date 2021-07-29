@@ -30,26 +30,25 @@ kind: ClusterImpairment
 metadata:
   name: test-impairment-cr
 spec:
-  impairments:
-    duration: 30 # seconds
-    start_delay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
-    interfaces:
-    - "ens2f0"
-    ingress: # uses ifb
-      bandwidth: 0 # kbit
-      latency: 10 # ms
-      loss: 0 # percent
-    egress:
-      bandwidth: 0 # kbit
-      latency: 100 # ms
-      loss: 0 # percent
-    link_flapping:
-      enable: false
-      down_time: 3 # Seconds
-      up_time: 3 # Seconds
-    node_selector:
-      key: "node-role.kubernetes.io/worker"
-      value: ""
+  duration: 30 # seconds
+  start_delay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
+  interfaces:
+  - "ens2f0"
+  ingress: # uses ifb
+    bandwidth: 0 # kbit
+    latency: 10 # ms
+    loss: 0 # percent
+  egress:
+    bandwidth: 0 # kbit
+    latency: 100 # ms
+    loss: 0 # percent
+  link_flapping:
+    enable: false
+    down_time: 3 # Seconds
+    up_time: 3 # Seconds
+  node_selector:
+    key: "node-role.kubernetes.io/worker"
+    value: ""
 ```
 
 #### Interfaces
@@ -91,15 +90,14 @@ kind: ClusterImpairment
 metadata:
   name: uneven-latency
 spec:
-  impairments:
-    duration: 60
-    start_delay: 5
-    interfaces:
-    - "ens2f0"
-    ingress:
-      latency: 10 # ms
-    egress:
-      latency: 100 # ms
+  duration: 60
+  start_delay: 5
+  interfaces:
+  - "ens2f0"
+  ingress:
+    latency: 10 # ms
+  egress:
+    latency: 100 # ms
 ```
 
 **Example 2**
@@ -111,15 +109,14 @@ kind: ClusterImpairment
 metadata:
   name: two-min-flap
 spec:
-  impairments:
-    duration: 480
-    start_delay: 5
-    interfaces:
-    - "ens2f0"
-    link_flapping:
-      enable: true
-      down_time: 120 # Seconds
-      up_time: 120 # Seconds
+  duration: 480
+  start_delay: 5
+  interfaces:
+  - "ens2f0"
+  link_flapping:
+    enable: true
+    down_time: 120 # Seconds
+    up_time: 120 # Seconds
 ```
 
 **Example 3**
@@ -131,17 +128,16 @@ kind: ClusterImpairment
 metadata:
   name: typical-scenario
 spec:
-  impairments:
-    duration: 30 # seconds
-    start_delay: 5 # seconds
-    interfaces:
-    - "ens2f0"
-    - "eno1"
-    egress:
-      latency: 50 # ms. Bidirectional, so total of 100ms
-    ingress:
-      latency: 50 # ms. Bidirectional, so total of 100ms
-    loss: 0.02 # percent
+  duration: 30 # seconds
+  start_delay: 5 # seconds
+  interfaces:
+  - "ens2f0"
+  - "eno1"
+  egress:
+    latency: 50 # ms. Bidirectional, so total of 100ms
+  ingress:
+    latency: 50 # ms. Bidirectional, so total of 100ms
+  loss: 0.02 # percent
 ```
 
 **Example 4**
@@ -152,23 +148,22 @@ kind: ClusterImpairment
 metadata:
   name: all-impairments
 spec:
-  impairments:
-    duration: 480 # seconds
-    start_delay: 5 # seconds
-    interfaces:
-    - "ens2f0"
-    egress:
-      latency: 50 # ms. Bidirectional, so total of 100ms
-      loss: 0.02 # percent
-      bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s
-    ingress:
-      latency: 50 # ms. Bidirectional, so total of 100ms
-      loss: 0.02 # percent
-      bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s
-    link_flapping:
-      enable: true
-      down_time: 30 # Seconds
-      up_time: 120 # Seconds
+  duration: 480 # seconds
+  start_delay: 5 # seconds
+  interfaces:
+  - "ens2f0"
+  egress:
+    latency: 50 # ms. Bidirectional, so total of 100ms
+    loss: 0.02 # percent
+    bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s
+  ingress:
+    latency: 50 # ms. Bidirectional, so total of 100ms
+    loss: 0.02 # percent
+    bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s
+  link_flapping:
+    enable: true
+    down_time: 30 # Seconds
+    up_time: 120 # Seconds
 ```
 
 ## Setup

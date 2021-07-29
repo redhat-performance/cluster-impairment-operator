@@ -121,6 +121,9 @@ def apply_tc_netem(interfaces, impairments, dry_run=False):
   else:
     logger.warn("Invalid state. Applying no impairments.")
 
+  if len(interfaces) == 0:
+    logger.warn("Invalid state. 0 interfaces given")
+
   for interface in interfaces:
     tc_command = ["tc", "qdisc", "add", "dev", interface, "root", "netem"]
     for impairment in impairments.values():
@@ -230,10 +233,13 @@ def main():
 
   if has_netem_impairments:
     ingress_interfaces = []
-    if len(egress_netem_impairments):
+    all_interfaces = []
+    if len(ingress_netem_impairments):
       for i in range(len(egress_interfaces)):
         ingress_interfaces.append("ifb" + str(i))
-    all_interfaces = egress_interfaces + ingress_interfaces
+      all_interfaces.extend(ingress_interfaces)
+    if len(egress_netem_impairments):
+      all_interfaces.extend(egress_interfaces)
 
     # Remove, just in case.
     remove_tc_netem(
@@ -246,11 +252,13 @@ def main():
       setup_ifb(egress_interfaces, dry_run)
 
     if len(ingress_netem_impairments):
+      logger.info("Applying ingress impairments " + str(ingress_netem_impairments))
       apply_tc_netem(
         ingress_interfaces,
         ingress_netem_impairments,
         dry_run)
     if len(egress_netem_impairments):
+      logger.info("Applying egress impairments " + str(egress_netem_impairments))
       apply_tc_netem(
         egress_interfaces,
         egress_netem_impairments,

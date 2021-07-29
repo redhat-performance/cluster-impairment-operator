@@ -3,13 +3,12 @@ kind: ClusterImpairment
 metadata:
   name: two-min-flap
 spec:
-  impairments:
-    duration: 480
-    start_delay: 5
-    interfaces:
-    - "ens2f0"
-    link_flapping:
-      enable: true
-      down_time: 120 # Seconds
-      up_time: 120 # Seconds
+  duration: 480
+  start_delay: 5
+  interfaces:
+  - "ens2f0"
+  link_flapping:
+    enable: true
+    down_time: 120 # Seconds
+    up_time: 120 # Seconds
 

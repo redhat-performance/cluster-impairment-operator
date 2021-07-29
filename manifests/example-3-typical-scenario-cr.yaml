@@ -3,15 +3,14 @@ kind: ClusterImpairment
 metadata:
   name: typical-scenario
 spec:
-  impairments:
-    duration: 30 # seconds
-    start_delay: 5 # seconds
-    interfaces:
-    - "ens2f0"
-    - "eno1"
-    egress:
-      latency: 50 # ms. Bidirectional, so total of 100ms
-    ingress:
-      latency: 50 # ms. Bidirectional, so total of 100ms
-    loss: 0.02 # percent
+  duration: 30 # seconds
+  start_delay: 5 # seconds
+  interfaces:
+  - "ens2f0"
+  - "eno1"
+  egress:
+    latency: 50 # ms. Bidirectional, so total of 100ms
+  ingress:
+    latency: 50 # ms. Bidirectional, so total of 100ms
+  loss: 0.02 # percent
 
