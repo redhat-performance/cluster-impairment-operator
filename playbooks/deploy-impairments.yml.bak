@@ -1,7 +1,0 @@
----
-- hosts: localhost
-  tasks: []
-
-  roles:
-    - deploy-impairment-workers
-
