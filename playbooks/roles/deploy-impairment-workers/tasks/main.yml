@@ -1,7 +1,7 @@
 #---
 # tasks file for deploy-impairment-workers
 - debug:
-    msg: "Running main task for ClusterImpairment {{ ansible_operator_meta.name }} in namespace {{ ansible_operator_meta.namespace }}"
+    msg: "Running main task for ClusterImpairment '{{ ansible_operator_meta.name }}' in namespace {{ ansible_operator_meta.namespace }}"
 
 - name: Get ClusterImpairment status
   k8s_info:
@@ -11,8 +11,12 @@
     namespace: "{{ ansible_operator_meta.namespace }}"
   register: impairment_facts
 
+- name: Set name of daemonset
+  set_fact:
+    daemonset_name: "cluster-impairment-daemonset-{{ ansible_operator_meta.name }}"
+
 - debug:
-    var: impairment_facts
+    var: daemonset_name
 
 - name: Run impairments
   when: "impairment_facts.resources is defined and (impairment_facts.resources|length) > 0 and (('status' not in impairment_facts.resources[0]) or 'run_status' not in impairment_facts.resources[0]['status'] or impairment_facts.resources[0]['status']['run_status'] == 'not_run')"
@@ -80,10 +84,13 @@
       retries: "{{ ((sleep_time | int) / 5)|round(0,'ceil')|int }}"
       ignore_errors: yes
 
-    - name: Remove Daemonset
-      k8s:
-        state: absent
-        definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
+- name: Remove Daemonset
+  k8s:
+    state: absent
+#    definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
+    kind: DaemonSet
+    name: "{{ daemonset_name }}"
+    namespace: "cluster-impairment-operator"
 
 - name: Mark as complete
   operator_sdk.util.k8s_status:

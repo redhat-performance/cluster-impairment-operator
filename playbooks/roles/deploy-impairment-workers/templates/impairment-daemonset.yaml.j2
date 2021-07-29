@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: cluster-impairment-initializer
+  name: "{{ daemonset_name }}"
   namespace: cluster-impairment-operator
   labels:
-    k8s-app: cluster-impairment-initializer
+    k8s-app: "{{ daemonset_name }}"
 spec:
   selector:
     matchLabels:
-      name: cluster-impairment-initializer
+      name: "{{ daemonset_name }}"
   template:
     metadata:
       labels:
-        name: cluster-impairment-initializer
+        name: "{{ daemonset_name }}"
     spec:
       tolerations:
       - key: node-role.kubernetes.io/master
