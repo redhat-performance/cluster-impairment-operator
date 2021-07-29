@@ -79,10 +79,10 @@
       until: (impairment_facts.resources|length) == 0
       delay: 4
       # Retry until the operator would finish anyway.
-      # This will error out, but ignore_errors is yes
+      # Set it to never fail because normally it fails after it runs out of retries0
       # # The delay is four seconds, plus the second from the operation itself.
       retries: "{{ ((sleep_time | int) / 5)|round(0,'ceil')|int }}"
-      ignore_errors: yes
+      failed_when: False
 
 - name: Remove Daemonset
   k8s:
