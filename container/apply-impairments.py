@@ -288,7 +288,7 @@ def main():
 
     time.sleep(.1)
     wait_logger += 1
-    if wait_logger >= 100:
+    if wait_logger >= 100 and end_time - current_time < 900:
       logger.info("Remaining impairment duration: {}".format(round(end_time - current_time, 1)))
       wait_logger = 0
     current_time = time.time()
