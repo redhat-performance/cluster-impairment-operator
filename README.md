@@ -83,6 +83,9 @@ The configuration sections "ingress" and "egress" apply to each direction.
 
 **Example 1**
 In this example, egress latency is set to 100ms, but the ingress latency is set to 10ms. So the latency to the interface will end up being 10ms, but 100ms going out. When pinging, this will result in 110ms of latency.
+
+![diagram](media/clusterimpairment_example_1.png)
+
 ```yaml
 apiVersion: apps.redhat.com/v1alpha1
 kind: ClusterImpairment
