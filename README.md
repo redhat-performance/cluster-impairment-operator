@@ -201,6 +201,8 @@ First, configure a ClusterImpairment type's spec with the information for the im
 
 Once the clusterimpairment type is set, apply it and it will work.
 
+To re-run an impairment, delete the impairment with `oc delete -f path/to/manifest.yaml`, then apply it again.
+
 ## Limitations
 
 ### Multiple Impairments
