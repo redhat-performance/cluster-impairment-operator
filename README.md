@@ -2,6 +2,8 @@
 
 cluster-impairment-operator is an operator designed to automate the application of impairments to the nodes in a cluster.
 
+![Demo](media/simple-example-1.gif)
+
 ## Features
 
 Traffic Direction:
@@ -198,8 +200,6 @@ Not setup. Planned for later.
 First, configure a ClusterImpairment type's spec with the information for the impairment you want to run. Most importantly, set the interface(s). You can list the interfaces with `ifconfig`. If an invalid interface is set, the pod's logs will show `ifconfig` output.
 
 Once the clusterimpairment type is set, apply it and it will work.
-
-![Demo](media/simple-example-1.gif)
 
 ## Limitations
 
