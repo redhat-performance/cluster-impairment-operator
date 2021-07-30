@@ -199,6 +199,8 @@ First, configure a ClusterImpairment type's spec with the information for the im
 
 Once the clusterimpairment type is set, apply it and it will work.
 
+![Demo](media/simple-example-1.gif)
+
 ## Limitations
 
 ### Multiple Impairments
