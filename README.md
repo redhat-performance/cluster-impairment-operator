@@ -218,3 +218,7 @@ When link flapping, if you flap the link that Kubernetes uses to communicate wit
 In this case, it is helpful to set the duration properly instead of running for an indefinite or large amount of time, because the node will properly go back to the unimpaired state at that time.
 
 If the cluster becomes offline due to the link flapping when you do not want it to be offline, soft restarting the nodes after removing the custom resource should remove all impairments.
+
+### Simultaneous Impairments
+
+There is currently a configured limit of 20 ClusterImpairment resources working at the same time. If that is a limitation for your use case, you can change it in `config/manager/manager.yaml` or you can try to find a way to make each ClusterImpairment do more.
