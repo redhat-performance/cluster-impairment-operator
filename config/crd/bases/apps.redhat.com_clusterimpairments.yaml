@@ -35,11 +35,71 @@ spec:
           metadata:
             type: object
           spec:
-            description: Spec defines the desired state of ClusterImpairment
+            description: "Spec defines the desired state of ClusterImpairment"
             type: object
-            x-kubernetes-preserve-unknown-fields: true
+            properties:
+              duration:
+                description: "The duration of the impairment in seconds."
+                type: integer
+              start_delay:
+                description: "The delay (in seconds) before starting the impairments. At least 5 seconds recommended for Kubernetes and for synchronization of the impairments."
+                type: integer
+              interfaces:
+                description: "All interfaces that the impairments should be applied to. Must be valid interfaces or the impairments will fail to apply."
+                type: array
+                items:
+                  type: string
+              ingress:
+                description: "The configuration section that specifies the ingress impairments."
+                type: object
+                properties:
+                  bandwidth:
+                    description: "The bandwidth limit in kbit/sec"
+                    type: integer
+                  latency:
+                    description: "The latency applied in ms"
+                    type: integer
+                  loss:
+                    description: "The packet loss in percent"
+                    type: number
+              egress:
+                description: "The configuration section that specifies the egress impairments."
+                type: object
+                properties:
+                  bandwidth:
+                    description: "The bandwidth limit in kbit/sec"
+                    type: integer
+                  latency:
+                    description: "The latency applied in ms"
+                    type: integer
+                  loss:
+                    description: "The packet loss in percent"
+                    type: number
+              link_flapping:
+                description: "The configuration section that specifies the link flapping impairments."
+                type: object
+                properties:
+                  enable:
+                    description: "Whether to enable link flapping."
+                    type: boolean
+                  down_time:
+                    description: "The duration that the link should be disabled."
+                    type: integer
+                  up_time:
+                    description: "The duration that the link should be enabled."
+                    type: integer
+              node_selector:
+                description: "The configuration section that specifies the node selector that should be applied to the daemonset. Default: worker nodes."
+                type: object
+                properties:
+                  key:
+                    description: "The key for the node selector"
+                    type: string
+                  value:
+                    description: "The value for the node selector"
+                    type: string
           status:
-            description: Status defines the observed state of ClusterImpairment
+            description: "Status defines the observed state of ClusterImpairment"
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
