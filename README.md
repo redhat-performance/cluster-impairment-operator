@@ -181,7 +181,7 @@ spec:
 
 To run using the current latest image:
 1. Clone the repository.
-2. Run `make deploy` with the kubeconfig in the environment variables.
+2. Run `make deploy` with KUBECONFIG environment variable set to the location of the kubeconfig.
 
 To run with your own code, there are more steps.
 
