@@ -1,6 +1,6 @@
 FROM quay.io/centos/centos:8
 
-RUN yum install iproute-tc python3 net-tools -y
+RUN yum update -y && yum install iproute-tc python3 net-tools -y
 
 COPY apply-impairments.py /
 
