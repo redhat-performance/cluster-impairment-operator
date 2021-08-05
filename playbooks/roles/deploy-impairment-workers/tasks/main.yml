@@ -15,8 +15,23 @@
   set_fact:
     daemonset_name: "cluster-impairment-daemonset-{{ ansible_operator_meta.name }}"
 
-- debug:
-    var: daemonset_name
+- name: Get namespace status
+  k8s_info:
+    api_version: v1
+    kind: Namespace
+    name: "cluster-impairment-operator"
+    namespace: "cluster-impairment-operator"
+  register: namespace_facts
+
+- name: Determine whether to run in namespace
+  set_fact:
+    correct_namespace: "cluster-impairment-operator"
+  when: (namespace_facts.resources|length) > 0
+
+- name: Determine whether to run in default namespace
+  set_fact:
+    correct_namespace: "default"
+  when: (namespace_facts.resources|length) == 0
 
 - name: Run impairments
   when: "impairment_facts.resources is defined and (impairment_facts.resources|length) > 0 and (('status' not in impairment_facts.resources[0]) or 'run_status' not in impairment_facts.resources[0]['status'] or impairment_facts.resources[0]['status']['run_status'] == 'not_run')"
@@ -51,6 +66,9 @@
 
     - debug:
         var: end_time_epoch
+
+    - debug:
+        var: correct_namespace
 
     - name: Deploy Daemonset
       k8s:
@@ -90,7 +108,7 @@
 #    definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
     kind: DaemonSet
     name: "{{ daemonset_name }}"
-    namespace: "cluster-impairment-operator"
+    namespace: "{{ correct_namespace }}"
 
 - name: Mark as complete
   operator_sdk.util.k8s_status:

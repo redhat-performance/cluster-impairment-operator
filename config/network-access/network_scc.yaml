@@ -19,4 +19,4 @@ runAsUser:
 seLinuxContext:
   type: RunAsAny
 users:
-- system:serviceaccount:cluster-impairment-operator:network-access
+- system:serviceaccount:cluster-impairment-operator:network-access-sa

@@ -2,7 +2,9 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: "{{ daemonset_name }}"
+{% if correct_namespace == "cluster-impairment-operator" %}
   namespace: cluster-impairment-operator
+{% endif %}
   labels:
     k8s-app: "{{ daemonset_name }}"
 spec:
@@ -103,4 +105,4 @@ spec:
           path: /lib/modules
       hostNetwork: true
       dnsPolicy: Default
-      serviceAccountName: network-access
+      serviceAccountName: network-access-sa
