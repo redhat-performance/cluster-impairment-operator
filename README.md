@@ -33,22 +33,32 @@ metadata:
   name: test-impairment-cr
 spec:
   duration: 30 # seconds
-  start_delay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
+  startDelay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
   interfaces:
   - "ens2f0"
   ingress: # uses ifb
     bandwidth: 0 # kbit
     latency: 10 # ms
+    latencyOptions:
+      jitter: 5 # ms
+      correlation: 25 # percent
+      distribution: normal
+      reorder: 5 # one in 5 will skip delay, reordering
+      reorder_correlation: 25 # percent
     loss: 0 # percent
+    lossOptions:
+      correlation: 25 # percent
+    corruption: 0.1 # percent
+    duplication: 1 # percent
   egress:
     bandwidth: 0 # kbit
     latency: 100 # ms
     loss: 0 # percent
-  link_flapping:
+  linkFlapping:
     enable: false
-    down_time: 3 # Seconds
-    up_time: 3 # Seconds
-  node_selector:
+    downTime: 3 # Seconds
+    upTime: 3 # Seconds
+  nodeSelector:
     key: "node-role.kubernetes.io/worker"
     value: ""
 ```
