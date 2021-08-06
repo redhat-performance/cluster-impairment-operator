@@ -16,9 +16,9 @@ metadata:
         }
       ]
     capabilities: Basic Install
-    operators.operatorframework.io/builder: operator-sdk-v1.8.0+git
+    operators.operatorframework.io/builder: operator-sdk-v1.10.0+git
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
-  name: cluster-impairment-operator.v0.0.1
+  name: cluster-impairment-operator.v1.0.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -232,4 +232,4 @@ spec:
   minKubeVersion: "1.16"
   provider:
     name: Red Hat Performance
-  version: 0.0.1
+  version: 1.0.0

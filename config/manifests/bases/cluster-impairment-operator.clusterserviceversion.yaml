@@ -46,4 +46,4 @@ spec:
   minKubeVersion: "1.16"
   provider:
     name: Red Hat Performance
-  version: 0.0.1
+  version: 1.0.0
