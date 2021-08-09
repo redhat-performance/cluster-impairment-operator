@@ -229,7 +229,7 @@ spec:
   - email: akrzos@redhat.com
     name: Alex Krzos
   maturity: alpha
-  minKubeVersion: "1.16"
+  minKubeVersion: 1.16.0
   provider:
     name: Red Hat Performance
   version: 1.0.0
