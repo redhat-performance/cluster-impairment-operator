@@ -4,6 +4,8 @@ metadata:
   name: "{{ daemonset_name }}"
 {% if correct_namespace == "cluster-impairment-operator" %}
   namespace: cluster-impairment-operator
+{% else %}
+  namespace: default
 {% endif %}
   labels:
     k8s-app: "{{ daemonset_name }}"
