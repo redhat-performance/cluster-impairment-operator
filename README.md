@@ -13,15 +13,50 @@ Traffic Direction:
 
 ### Impairments
 
-| Impairment    | Description                             | Unit    | Uses Netem |
-|---------------|-----------------------------------------|---------|------------|
-| Bandwidth     | The bandwidth limit                     | kbit/s  | Yes        |
-| Latency       | The delay of the packets                | ms      | Yes        |
-| Packet Loss   | The percent of packets that are dropped | percent | Yes        |
-| Link Flapping | Turns the interface on and off          | bool    | No         |
+| Impairment    | Description                             | Unit    | Uses Netem | Correlation Supported |
+|---------------|-----------------------------------------|---------|------------|-----------------------|
+| Bandwidth     | The bandwidth limit                     | kbit/s  | Yes        | No                    |
+| Latency       | The delay of the packets                | ms      | Yes        | Yes                   |
+| Packet Loss   | The percent of packets that are dropped | percent | Yes        | Yes                   |
+| Link Flapping | Turns the interface on and off          | bool    | No         | No                    |
 
 On the tested environment (RHEL CoreOS 48.84), the impairments can be used alongside link flapping.
 
+#### Latency Options
+
+In addition to simply delaying the packets, there are advanced latency options.
+
+**Jitter**
+
+Semi-randomly adds or subtracts from the latency according to the distribution up to the amount specified.
+If latency is 100ms, and jitter is 10ms, the actual latency will vary 100±10ms.
+
+
+**Distribution**
+
+The distribution of the jitter. The options are:
+* Normal
+* Pareto
+* Paretonormal
+
+**Correlation**
+
+The percent chance that the next latency's value will correlation with the preceeding latency.
+
+**Reorder**
+
+The percentage of packets that are not delayed, causing a reorder due to them being sent before the delayed ones.
+Applying jitter itself has the potential to also cause reordering.
+
+**Reorder correlation**
+ 
+The percet chance that the value for the next reorder will correlate with the preceeding value.
+
+#### Loss options
+
+**Correlation**
+
+The percent chance that the previous loss value for a packet correlates with the loss value for the next packet.
 
 ## Configuration
 
@@ -43,7 +78,7 @@ spec:
       jitter: 5 # ms
       correlation: 25 # percent
       distribution: normal
-      reorder: 5 # one in 5 will skip delay, reordering
+      reorder: 25 # percent of packets that will skip the delay
       reorder_correlation: 25 # percent
     loss: 0 # percent
     lossOptions:
