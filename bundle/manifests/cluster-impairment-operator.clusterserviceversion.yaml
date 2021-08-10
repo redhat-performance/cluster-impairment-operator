@@ -150,7 +150,7 @@ spec:
                 env:
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/redhat-performance/cluster-impairment-operator:latest
+                image: quay.io/redhat-performance/cluster-impairment-operator:1.0.0
                 livenessProbe:
                   httpGet:
                     path: /healthz
