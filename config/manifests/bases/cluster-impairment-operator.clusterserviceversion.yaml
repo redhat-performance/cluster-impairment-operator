@@ -4,6 +4,8 @@ metadata:
   annotations:
     alm-examples: '[]'
     capabilities: Basic Install
+    containerImage: quay.io/redhat-performance/cluster-impairment-operator-bundle:latest
+    repository: https://github.com/redhat-performance/cluster-impairment-operator
   name: cluster-impairment-operator.v1.0.0
   namespace: placeholder
 spec:
