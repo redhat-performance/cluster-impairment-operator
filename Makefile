@@ -12,6 +12,8 @@ VERSION ?= 1.0.0
 # - use environment variables to overwrite this value (e.g export CHANNELS="preview,fast,stable")
 ifneq ($(origin CHANNELS), undefined)
 BUNDLE_CHANNELS := --channels=$(CHANNELS)
+else
+BUNDLE_CHANNELS := --channels=beta
 endif
 
 # DEFAULT_CHANNEL defines the default channel used in the bundle.

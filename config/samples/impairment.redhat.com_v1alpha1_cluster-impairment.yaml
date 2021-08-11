@@ -1,7 +1,0 @@
-apiVersion: impairment.redhat.com.redhat.com/v1alpha1
-kind: Cluster-impairment
-metadata:
-  name: cluster-impairment-sample
-spec:
-  # Add fields here
-  foo: bar
