@@ -42,7 +42,7 @@ spec:
 {% endif %}
       containers:
         - name: impairment-worker
-          image: quay.io/redhat-performance/cluster-impairment-worker
+          image: "{{ lookup('env', 'WORKER_IMG') }}"
           env:
           - name: INTERFACE
             value: "{{ impairment_interface_list }}"

@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 1.0.0
+VERSION ?= 1.0.1
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "preview,fast,stable")
@@ -29,6 +29,9 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
 BUNDLE_IMG ?= quay.io/redhat-performance/cluster-impairment-operator-bundle:${VERSION}
+
+# The image for the worker
+WORKER_IMG ?= quay.io/redhat-performance/cluster-impairment-worker:${VERSION}
 
 # Image URL to use all building/pushing image targets
 IMG ?= quay.io/redhat-performance/cluster-impairment-operator:${VERSION}
@@ -57,10 +60,10 @@ run: ansible-operator ## Run against the configured Kubernetes cluster in ~/.kub
 	$(ANSIBLE_OPERATOR) run
 
 docker-build: ## Build docker image with the manager.
-	podman build -t ${IMG} .
+	podman build -t ${IMG} --build-arg worker_img=${WORKER_IMG} . && cd container && podman build -t ${WORKER_IMG} .
 
 docker-push: ## Push docker image with the manager.
-	podman push ${IMG}
+	podman push ${IMG} && podman push ${WORKER_IMG}
 #        echo 'Pushing to ${IMG}'
 
 ##@ Deployment
