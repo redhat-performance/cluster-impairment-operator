@@ -193,7 +193,7 @@ To run with your own code, there are more steps.
 
 ### Deploying from operator-hub
 
-Not setup. Planned for later.
+See the instructions on https://operatorhub.io/operator/cluster-impairment-operator
 
 ## Running impairments
 
