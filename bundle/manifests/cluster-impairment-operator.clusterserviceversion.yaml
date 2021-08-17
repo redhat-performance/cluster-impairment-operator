@@ -107,7 +107,7 @@ metadata:
     operators.operatorframework.io/builder: operator-sdk-v1.10.0+git
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
     repository: https://github.com/redhat-performance/cluster-impairment-operator
-  name: cluster-impairment-operator.v1.0.0
+  name: cluster-impairment-operator.v1.0.1
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -334,7 +334,7 @@ spec:
                 env:
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/redhat-performance/cluster-impairment-operator:1.0.0
+                image: quay.io/redhat-performance/cluster-impairment-operator:1.0.1
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -418,4 +418,4 @@ spec:
   minKubeVersion: 1.16.0
   provider:
     name: Red Hat Performance
-  version: 1.0.0
+  version: 1.0.1
