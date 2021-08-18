@@ -88,10 +88,10 @@ spec:
     latency: 10 # ms
     latencyOptions:
       jitter: 5 # ms
-      jitter_correlation: 25 # percent
+      jitterCorrelation: 25 # percent
       distribution: normal
       reorder: 25 # percent of packets that will skip the delay
-      reorder_correlation: 25 # percent
+      reorderCorrelation: 25 # percent
     loss: 0 # percent
     lossOptions:
       correlation: 25 # percent
