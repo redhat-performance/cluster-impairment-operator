@@ -13,12 +13,13 @@ Traffic Direction:
 
 ### Impairments
 
-| Impairment    | Description                             | Unit    | Uses Netem | Correlation Supported |
-|---------------|-----------------------------------------|---------|------------|-----------------------|
-| Bandwidth     | The bandwidth limit                     | kbit/s  | Yes        | No                    |
-| Latency       | The delay of the packets                | ms      | Yes        | Yes                   |
-| Packet Loss   | The percent of packets that are dropped | percent | Yes        | Yes                   |
-| Link Flapping | Turns the interface on and off          | bool    | No         | No                    |
+| Impairment    | Description                               | Unit    | Uses Netem | Correlation Supported |
+|---------------|-------------------------------------------|---------|------------|-----------------------|
+| Bandwidth     | The bandwidth limit                       | kbit/s  | Yes        | No                    |
+| Latency       | The delay of the packets                  | ms      | Yes        | Yes                   |
+| Packet Loss   | The percent of packets that are dropped   | percent | Yes        | Yes                   |
+| Corruption    | The percent of packets that are corrupted | percent | Yes        | Yes                   |
+| Link Flapping | Turns the interface on and off            | bool    | No         | No                    |
 
 On the tested environment (RHEL CoreOS 48.84), the impairments can be used alongside link flapping.
 
@@ -39,9 +40,9 @@ The distribution of the jitter. The options are:
 * Pareto
 * Paretonormal
 
-**Correlation**
+**Jitter correlation**
 
-The percent chance that the next latency's value will correlation with the preceeding latency.
+The percent chance that the next latency's jitter value will correlate with the preceeding latency.
 
 **Reorder**
 
@@ -57,6 +58,17 @@ The percet chance that the value for the next reorder will correlate with the pr
 **Correlation**
 
 The percent chance that the previous loss value for a packet correlates with the loss value for the next packet.
+
+#### Corruption options
+
+**Corruption**
+
+The percent chance that each packet will be corrupted.
+
+**Corruption correlation**
+
+The percet chance that the value for the next corruption will correlate with the preceeding value.
+
 
 ## Configuration
 
@@ -76,7 +88,7 @@ spec:
     latency: 10 # ms
     latencyOptions:
       jitter: 5 # ms
-      correlation: 25 # percent
+      jitter_correlation: 25 # percent
       distribution: normal
       reorder: 25 # percent of packets that will skip the delay
       reorder_correlation: 25 # percent
