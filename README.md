@@ -13,13 +13,14 @@ Traffic Direction:
 
 ### Impairments
 
-| Impairment    | Description                               | Unit    | Uses Netem | Correlation Supported |
-|---------------|-------------------------------------------|---------|------------|-----------------------|
-| Bandwidth     | The bandwidth limit                       | kbit/s  | Yes        | No                    |
-| Latency       | The delay of the packets                  | ms      | Yes        | Yes                   |
-| Packet Loss   | The percent of packets that are dropped   | percent | Yes        | Yes                   |
-| Corruption    | The percent of packets that are corrupted | percent | Yes        | Yes                   |
-| Link Flapping | Turns the interface on and off            | bool    | No         | No                    |
+| Impairment    | Description                                | Unit    | Uses Netem | Correlation Supported |
+|---------------|--------------------------------------------|---------|------------|-----------------------|
+| Bandwidth     | The bandwidth limit                        | kbit/s  | Yes        | No                    |
+| Latency       | The delay of the packets                   | ms      | Yes        | Yes                   |
+| Packet Loss   | The percent of packets that are dropped    | percent | Yes        | Yes                   |
+| Corruption    | The percent of packets that are corrupted  | percent | Yes        | Yes                   |
+| Duplication   | The percent of packets that are duplicated | percent | Yes        | Yes                   |
+| Link Flapping | Turns the interface on and off             | bool    | No         | No                    |
 
 On the tested environment (RHEL CoreOS 48.84), the impairments can be used alongside link flapping.
 
@@ -68,6 +69,16 @@ The percent chance that each packet will be corrupted.
 **Corruption correlation**
 
 The percet chance that the value for the next corruption will correlate with the preceeding value.
+
+#### Duplication options
+
+**Duplication**
+
+The percent chance that each packet will be duplicated.
+
+**Duplication correlation**
+
+The percet chance that the value for the next duplication will correlate with the preceeding value.
 
 
 ## Configuration
