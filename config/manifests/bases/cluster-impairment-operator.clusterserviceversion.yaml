@@ -4,7 +4,7 @@ metadata:
   annotations:
     capabilities: Basic Install
     categories: Networking, Developer Tools
-    containerImage: quay.io/redhat-performance/cluster-impairment-operator:1.0.0
+    containerImage: quay.io/redhat-performance/cluster-impairment-operator:1.0.1
     createdAt: "2021-08-11 12:15:00"
     description: Run Impairments on Kubernetes/Openshift Nodes
     repository: https://github.com/redhat-performance/cluster-impairment-operator
