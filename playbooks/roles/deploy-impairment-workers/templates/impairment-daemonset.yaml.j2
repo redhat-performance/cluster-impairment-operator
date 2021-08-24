@@ -19,7 +19,7 @@ metadata:
 {% if correct_namespace == "cluster-impairment-operator" %}
   namespace: cluster-impairment-operator
 {% else %}
-  namespace: default
+  namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
 {% endif %}
   labels:
     k8s-app: "{{ daemonset_name }}"
