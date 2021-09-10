@@ -17,6 +17,10 @@ spec:
       jsonPath: .status.run_status
       name: Status
       type: string
+    - description: Run status details
+      jsonPath: .status.status_details
+      name: Details
+      type: string
     name: v1alpha1
     schema:
       openAPIV3Schema:

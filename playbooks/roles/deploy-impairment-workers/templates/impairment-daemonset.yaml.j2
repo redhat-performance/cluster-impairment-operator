@@ -16,11 +16,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: "{{ daemonset_name }}"
-{% if correct_namespace == "cluster-impairment-operator" %}
   namespace: cluster-impairment-operator
-{% else %}
-  namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
-{% endif %}
   labels:
     k8s-app: "{{ daemonset_name }}"
 spec:
