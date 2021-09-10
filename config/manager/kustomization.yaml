@@ -13,4 +13,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/redhat-performance/cluster-impairment-operator
-  newTag: 1.0.1
+  newTag: 1.0.3

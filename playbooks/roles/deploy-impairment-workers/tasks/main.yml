@@ -37,27 +37,17 @@
     namespace: "cluster-impairment-operator"
   register: namespace_facts
 
-- name: Determine whether to run in namespace
-  set_fact:
-    correct_namespace: "cluster-impairment-operator"
-  when: (namespace_facts.resources|length) > 0
-
-- name: Determine whether to run in default namespace
-  set_fact:
-    correct_namespace: "default"
-  when: (namespace_facts.resources|length) == 0
-
 - name: Run impairments
-  when: "impairment_facts.resources is defined and (impairment_facts.resources|length) > 0 and (('status' not in impairment_facts.resources[0]) or 'run_status' not in impairment_facts.resources[0]['status'] or impairment_facts.resources[0]['status']['run_status'] == 'not_run')"
+  when: "(namespace_facts.resources|length) > 0 and impairment_facts.resources is defined and (impairment_facts.resources|length) > 0 and (('status' not in impairment_facts.resources[0]) or 'run_status' not in impairment_facts.resources[0]['status'] or impairment_facts.resources[0]['status']['run_status'] == 'not_run')"
   block:
-    - name: Mark as running
+    - name: Mark as starting
       operator_sdk.util.k8s_status:
         api_version: apps.redhat.com/v1alpha1
         kind: ClusterImpairment
         name: "{{ ansible_operator_meta.name }}"
         namespace: "{{ ansible_operator_meta.namespace }}"
         status:
-          run_status: "running"
+          run_status: "starting"
 
     - name: Install dependencies
       pip:
@@ -78,17 +68,20 @@
       set_fact:
         impairment_interface_list: "{{ interfaces | join(',') }}"
 
-    - debug:
-        var: end_time_epoch
-
-    - debug:
-        var: correct_namespace
-
     - name: Deploy Daemonset
       k8s:
         definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
         wait: yes
         wait_timeout: 12
+
+    - name: Mark as running
+      operator_sdk.util.k8s_status:
+        api_version: apps.redhat.com/v1alpha1
+        kind: ClusterImpairment
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          run_status: "running"
 
     - name: Calculate total sleep time
       set_fact:
@@ -122,7 +115,7 @@
 #    definition: "{{ lookup('template', 'impairment-daemonset.yaml.j2') | from_yaml }}"
     kind: DaemonSet
     name: "{{ daemonset_name }}"
-    namespace: "{{ correct_namespace }}"
+    namespace: "cluster-impairment-operator"
 
 - name: Mark as complete
   operator_sdk.util.k8s_status:
@@ -132,5 +125,18 @@
     namespace: "{{ ansible_operator_meta.namespace }}"
     status:
       run_status: "complete"
-  when: (impairment_facts.resources is defined) and ((impairment_facts.resources|length) > 0) # Resource still exists
+  when: (namespace_facts.resources|length) > 0 and (impairment_facts.resources is defined) and ((impairment_facts.resources|length) > 0) # Resource still exists
+
+- name: Mark as failed due to missing namespace
+  operator_sdk.util.k8s_status:
+    api_version: apps.redhat.com/v1alpha1
+    kind: ClusterImpairment
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    status:
+      run_status: "failed"
+      status_details: "Missing namespace cluster-impairment-operator"
+  when: (namespace_facts.resources|length) == 0
+
+
 

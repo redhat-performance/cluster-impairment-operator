@@ -4,7 +4,7 @@ metadata:
   annotations:
     capabilities: Basic Install
     categories: Networking, Developer Tools
-    containerImage: quay.io/redhat-performance/cluster-impairment-operator:1.0.0
+    containerImage: quay.io/redhat-performance/cluster-impairment-operator:1.0.3
     createdAt: "2021-08-11 12:15:00"
     description: Run Impairments on Kubernetes/Openshift Nodes
     repository: https://github.com/redhat-performance/cluster-impairment-operator
@@ -26,12 +26,12 @@ spec:
     the tested environment (RHEL CoreOS 48.84), the impairments can be used alongside
     link flapping.\n\n\n## Configuration\n\nHere is an example of the ClusterImpairment
     custom resource.\n\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind: ClusterImpairment\nmetadata:\n
-    \ name: test-impairment-cr\nspec:\n  duration: 30 # seconds\n  start_delay: 5
-    # seconds. It typically takes about 2-3 seconds for the Daemonset to run\n  interfaces:\n
+    \ name: test-impairment-cr\nspec:\n  duration: 30 # seconds\n  startDelay: 5 #
+    seconds. It typically takes about 2-3 seconds for the Daemonset to run\n  interfaces:\n
     \ - \"ens2f0\"\n  ingress: # uses ifb\n    bandwidth: 0 # kbit\n    latency: 10
     # ms\n    loss: 0 # percent\n  egress:\n    bandwidth: 0 # kbit\n    latency:
-    100 # ms\n    loss: 0 # percent\n  link_flapping:\n    enable: false\n    down_time:
-    3 # Seconds\n    up_time: 3 # Seconds\n  node_selector:\n    key: \"node-role.kubernetes.io/worker\"\n
+    100 # ms\n    loss: 0 # percent\n  linkFlapping:\n    enable: false\n    downTime:
+    3 # Seconds\n    upTime: 3 # Seconds\n  nodeSelector:\n    key: \"node-role.kubernetes.io/worker\"\n
     \   value: \"\"\n    \n```\n\n#### Interfaces\n\nThe interfaces configuration
     option is a list of all interfaces that the impairments should be applied to.
     The current implementation will error out once it hits an invalid interface.\n\nIf
@@ -56,28 +56,28 @@ spec:
     interface will end up being 10ms, but 100ms going out. When pinging, this will
     result in 110ms of latency.\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind:
     ClusterImpairment\nmetadata:\n  name: uneven-latency\nspec:\n  duration: 60\n
-    \ start_delay: 5\n  interfaces:\n  - \"ens2f0\"\n  ingress:\n    latency: 10 #
+    \ startDelay: 5\n  interfaces:\n  - \"ens2f0\"\n  ingress:\n    latency: 10 #
     ms\n  egress:\n    latency: 100 # ms\n\n```\n\n**Example 2**\n\n\nIn this example,
     link flapping will be enabled, and it will turn the interface on and off every
     2 minutes. That is long enough for kubernetes to determine that a node is unavailable.\n\n```\n\napiVersion:
     apps.redhat.com/v1alpha1\nkind: ClusterImpairment\nmetadata:\n  name: two-min-flap\nspec:\n
-    \ duration: 480\n  start_delay: 5\n  interfaces:\n  - \"ens2f0\"\n  link_flapping:\n
-    \   enable: true\n    down_time: 120 # Seconds\n    up_time: 120 # Seconds\n\n```\n\n**Example
+    \ duration: 480\n  startDelay: 5\n  interfaces:\n  - \"ens2f0\"\n  linkFlapping:\n
+    \   enable: true\n    downTime: 120 # Seconds\n    upTime: 120 # Seconds\n\n```\n\n**Example
     3**\n\n\nIn this example, a realistic set of impairments is applied to `ens2f0`
     and `eno1` for 30 seconds:\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind:
     ClusterImpairment\nmetadata:\n  name: typical-scenario\nspec:\n  duration: 30
-    # seconds\n  start_delay: 5 # seconds\n  interfaces:\n  - \"ens2f0\"\n  - \"eno1\"\n
+    # seconds\n  startDelay: 5 # seconds\n  interfaces:\n  - \"ens2f0\"\n  - \"eno1\"\n
     \ egress:\n    latency: 50 # ms. Bidirectional, so total of 100ms\n  ingress:\n
     \   latency: 50 # ms. Bidirectional, so total of 100ms\n  loss: 0.02 # percent\n\n```\n\n**Example
     4**\n\n\nIn this example, a combination of latency, packet loss, bandwidth, and
     link flapping is applied.\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind:
     ClusterImpairment\nmetadata:\n  name: all-impairments\nspec:\n  duration: 480
-    # seconds\n  start_delay: 5 # seconds\n  interfaces:\n  - \"ens2f0\"\n  egress:\n
+    # seconds\n  startDelay: 5 # seconds\n  interfaces:\n  - \"ens2f0\"\n  egress:\n
     \   latency: 50 # ms. Bidirectional, so total of 100ms\n    loss: 0.02 # percent\n
     \   bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s\n  ingress:\n    latency: 50
     # ms. Bidirectional, so total of 100ms\n    loss: 0.02 # percent\n    bandwidth:
-    1000 # 1000 kbit/s, about 1 mbit/s\n  link_flapping:\n    enable: true\n    down_time:
-    30 # Seconds\n    up_time: 120 # Seconds\n\n```\n\n## Setup\n\n### Requirements\n\n1.
+    1000 # 1000 kbit/s, about 1 mbit/s\n  linkFlapping:\n    enable: true\n    downTime:
+    30 # Seconds\n    upTime: 120 # Seconds\n\n```\n\n## Setup\n\n### Requirements\n\n1.
     You need `make` installed.\n2. You need access to the kubernetes cluster with
     a kubeconfig.\n\n### Installation\n\nTo run using the current latest image:\n1.
     Clone the repository.\n2. Run `make deploy` with KUBECONFIG environment variable
@@ -86,25 +86,27 @@ spec:
     the Kubernetes cluster and the kubeconfig.\n3. Modify the makefile to change the
     `IMG` variable to your image repository. If you do not have podman installed,
     also change podman to docker.\n4. Run `make docker-build` then `make docker-push`.\n5.
-    Then run `make deploy`\n\n### Deploying from operator-hub\n\nFollow the instructions
-    on this site to deploy from here.\n\n## Running impairments\n\nFirst, configure
-    a ClusterImpairment type's spec with the information for the impairment you want
-    to run. Most importantly, set the interface(s). You can list the interfaces with
-    `ifconfig`. If an invalid interface is set, the pod's logs will show `ifconfig`
-    output.\n\n\nOnce the clusterimpairment type is set, apply it and it will work.\n\n\nTo
-    re-run an impairment, delete the impairment with `oc delete -f path/to/manifest.yaml`,
-    then apply it again.\n\n\n## Limitations\n\n\n### Multiple Impairments\n\n\nYou
-    should avoid any configurations that apply impairments to the same interface on
-    the same node. There are potential conflicts. The worker pod will attempt to remove
-    all impairments on that interface before applying new ones.\n\n\nInstead, take
-    advantage of the full control of both ingress and egress impairments from within
-    the same ClusterImpairment resource.\n\n\nThere is currently a configured limit
-    of 20 ClusterImpairment resources working at the same time. If that is a limitation
-    for your use case, you can change it in `config/manager/manager.yaml` or you can
-    try to find a way to make each ClusterImpairment do more.\n\n### Traffic Control
-    (TC)\n\nTraffic control is how cluster-impairment-operator applies the latency,
-    bandwidth, and packet loss impairments. The limitation is due to Linux not being
-    realtime operating system, so the impairment will not be perfectly consistent.\n\n###
+    Then run `make deploy`\n\n### Deploying from operator-hub\n\n*Important* You must
+    manually apply the serviceaccount!\n\nFirst, Follow the instructions on this site
+    to deploy from here.\n\nNext, apply the manifest \"serviceaccount.yaml\" from
+    the manifests folder.\n\nThen you can apply your ClusterImpairment resources.\n\n##
+    Running impairments\n\nFirst, configure a ClusterImpairment type's spec with the
+    information for the impairment you want to run. Most importantly, set the interface(s).
+    You can list the interfaces with `ifconfig`. If an invalid interface is set, the
+    pod's logs will show `ifconfig` output.\n\n\nOnce the clusterimpairment type is
+    set, apply it and it will work.\n\n\nTo re-run an impairment, delete the impairment
+    with `oc delete -f path/to/manifest.yaml`, then apply it again.\n\n\n## Limitations\n\n\n###
+    Multiple Impairments\n\n\nYou should avoid any configurations that apply impairments
+    to the same interface on the same node. There are potential conflicts. The worker
+    pod will attempt to remove all impairments on that interface before applying new
+    ones.\n\n\nInstead, take advantage of the full control of both ingress and egress
+    impairments from within the same ClusterImpairment resource.\n\n\nThere is currently
+    a configured limit of 20 ClusterImpairment resources working at the same time.
+    If that is a limitation for your use case, you can change it in `config/manager/manager.yaml`
+    or you can try to find a way to make each ClusterImpairment do more.\n\n### Traffic
+    Control (TC)\n\nTraffic control is how cluster-impairment-operator applies the
+    latency, bandwidth, and packet loss impairments. The limitation is due to Linux
+    not being realtime operating system, so the impairment will not be perfectly consistent.\n\n###
     Link Flapping\n\nWhen link flapping, if you flap the link that Kubernetes uses
     to communicate with the pods, you may be unable to remove the pod until the link
     is on long enough for Kubernetes to communicate with the impaired node.\n\n\nIn
