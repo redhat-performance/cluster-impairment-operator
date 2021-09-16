@@ -4,7 +4,7 @@ metadata:
   name: all-impairments
 spec:  
   duration: 480 # seconds
-  start_delay: 5 # seconds
+  startDelay: 5 # seconds
   interfaces:
   - "ens2f0"
   egress:
@@ -15,8 +15,8 @@ spec:
     latency: 50 # ms. Bidirectional, so total of 100ms
     loss: 0.02 # percent
     bandwidth: 10000 # 1000 kbit/s, about 10 mbit/s
-  link_flapping:
+  linkFlapping:
     enable: true
-    down_time: 30 # Seconds
-    up_time: 120 # Seconds
+    downTime: 30 # Seconds
+    upTime: 120 # Seconds
 

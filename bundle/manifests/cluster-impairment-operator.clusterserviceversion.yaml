@@ -25,12 +25,12 @@ metadata:
             "interfaces": [
               "ens2f0"
             ],
-            "link_flapping": {
-              "down_time": 30,
+            "linkFlapping": {
+              "downTime": 30,
               "enable": true,
-              "up_time": 120
+              "upTime": 120
             },
-            "start_delay": 5
+            "startDelay": 5
           }
         },
         {
@@ -44,12 +44,12 @@ metadata:
             "interfaces": [
               "ens2f0"
             ],
-            "link_flapping": {
-              "down_time": 120,
+            "linkFlapping": {
+              "downTime": 120,
               "enable": true,
-              "up_time": 120
+              "upTime": 120
             },
-            "start_delay": 5
+            "startDelay": 5
           }
         },
         {
@@ -71,7 +71,7 @@ metadata:
               "eno1"
             ],
             "loss": 0.02,
-            "start_delay": 5
+            "startDelay": 5
           }
         },
         {
@@ -91,11 +91,11 @@ metadata:
             "interfaces": [
               "ens2f0"
             ],
-            "node_selector": {
+            "nodeSelector": {
               "key": "node-role.kubernetes.io/worker",
               "value": ""
             },
-            "start_delay": 5
+            "startDelay": 5
           }
         }
       ]

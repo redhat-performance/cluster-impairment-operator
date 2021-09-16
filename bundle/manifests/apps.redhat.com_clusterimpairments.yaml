@@ -77,21 +77,21 @@ spec:
                 items:
                   type: string
                 type: array
-              link_flapping:
+              linkFlapping:
                 description: The configuration section that specifies the link flapping
                   impairments.
                 properties:
-                  down_time:
+                  downTime:
                     description: The duration that the link should be disabled.
                     type: integer
                   enable:
                     description: Whether to enable link flapping.
                     type: boolean
-                  up_time:
+                  upTime:
                     description: The duration that the link should be enabled.
                     type: integer
                 type: object
-              node_selector:
+              nodeSelector:
                 description: 'The configuration section that specifies the node selector
                   that should be applied to the daemonset. Default: worker nodes.'
                 properties:
@@ -102,7 +102,7 @@ spec:
                     description: The value for the node selector
                     type: string
                 type: object
-              start_delay:
+              startDelay:
                 description: The delay (in seconds) before starting the impairments.
                   At least 5 seconds recommended for Kubernetes and for synchronization
                   of the impairments.

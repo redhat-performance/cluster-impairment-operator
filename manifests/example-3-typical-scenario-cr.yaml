@@ -4,7 +4,7 @@ metadata:
   name: typical-scenario
 spec:
   duration: 30 # seconds
-  start_delay: 5 # seconds
+  startDelay: 5 # seconds
   interfaces:
   - "ens2f0"
   - "eno1"

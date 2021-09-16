@@ -163,7 +163,7 @@ metadata:
   name: uneven-latency
 spec:
   duration: 60
-  start_delay: 5
+  startDelay: 5
   interfaces:
   - "ens2f0"
   ingress:
@@ -182,13 +182,13 @@ metadata:
   name: two-min-flap
 spec:
   duration: 480
-  start_delay: 5
+  startDelay: 5
   interfaces:
   - "ens2f0"
-  link_flapping:
+  linkFlapping:
     enable: true
-    down_time: 120 # Seconds
-    up_time: 120 # Seconds
+    downTime: 120 # Seconds
+    upTime: 120 # Seconds
 ```
 
 **Example 3**
@@ -201,7 +201,7 @@ metadata:
   name: typical-scenario
 spec:
   duration: 30 # seconds
-  start_delay: 5 # seconds
+  startDelay: 5 # seconds
   interfaces:
   - "ens2f0"
   - "eno1"
@@ -221,7 +221,7 @@ metadata:
   name: all-impairments
 spec:
   duration: 480 # seconds
-  start_delay: 5 # seconds
+  startDelay: 5 # seconds
   interfaces:
   - "ens2f0"
   egress:
@@ -232,10 +232,10 @@ spec:
     latency: 50 # ms. Bidirectional, so total of 100ms
     loss: 0.02 # percent
     bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s
-  link_flapping:
+  linkFlapping:
     enable: true
-    down_time: 30 # Seconds
-    up_time: 120 # Seconds
+    downTime: 30 # Seconds
+    upTime: 120 # Seconds
 ```
 
 ## Setup

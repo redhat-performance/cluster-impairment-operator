@@ -4,14 +4,14 @@ metadata:
   name: uneven-latency
 spec:
   duration: 60
-  start_delay: 5
+  startDelay: 5
   interfaces:
   - "ens2f0"
   ingress:
     latency: 10 # ms
   egress:
     latency: 100 # ms
-  node_selector:
+  nodeSelector:
     key: "node-role.kubernetes.io/worker"
     value: ""
 

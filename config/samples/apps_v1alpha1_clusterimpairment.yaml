@@ -4,14 +4,14 @@ metadata:
   name: uneven-latency
 spec:
   duration: 60
-  start_delay: 5
+  startDelay: 5
   interfaces:
   - "ens2f0"
   ingress:
     latency: 10 # ms
   egress:
     latency: 100 # ms
-  node_selector:
+  nodeSelector:
     key: "node-role.kubernetes.io/worker"
     value: ""
 ---
@@ -21,13 +21,13 @@ metadata:
   name: two-min-flap
 spec:
   duration: 480
-  start_delay: 5
+  startDelay: 5
   interfaces:
   - "ens2f0"
-  link_flapping:
+  linkFlapping:
     enable: true
-    down_time: 120 # Seconds
-    up_time: 120 # Seconds
+    downTime: 120 # Seconds
+    upTime: 120 # Seconds
 ---
 apiVersion: apps.redhat.com/v1alpha1
 kind: ClusterImpairment
@@ -35,7 +35,7 @@ metadata:
   name: typical-scenario
 spec:
   duration: 30 # seconds
-  start_delay: 5 # seconds
+  startDelay: 5 # seconds
   interfaces:
   - "ens2f0"
   - "eno1"
@@ -51,7 +51,7 @@ metadata:
   name: all-impairments
 spec:
   duration: 480 # seconds
-  start_delay: 5 # seconds
+  startDelay: 5 # seconds
   interfaces:
   - "ens2f0"
   egress:
@@ -62,8 +62,8 @@ spec:
     latency: 50 # ms. Bidirectional, so total of 100ms
     loss: 0.02 # percent
     bandwidth: 10000 # 1000 kbit/s, about 10 mbit/s
-  link_flapping:
+  linkFlapping:
     enable: true
-    down_time: 30 # Seconds
-    up_time: 120 # Seconds
+    downTime: 30 # Seconds
+    upTime: 120 # Seconds
 

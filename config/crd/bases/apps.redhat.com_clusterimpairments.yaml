@@ -45,7 +45,7 @@ spec:
               duration:
                 description: "The duration of the impairment in seconds."
                 type: integer
-              start_delay:
+              startDelay:
                 description: "The delay (in seconds) before starting the impairments. At least 5 seconds recommended for Kubernetes and for synchronization of the impairments."
                 type: integer
               interfaces:
@@ -79,20 +79,20 @@ spec:
                   loss:
                     description: "The packet loss in percent"
                     type: number
-              link_flapping:
+              linkFlapping:
                 description: "The configuration section that specifies the link flapping impairments."
                 type: object
                 properties:
                   enable:
                     description: "Whether to enable link flapping."
                     type: boolean
-                  down_time:
+                  downTime:
                     description: "The duration that the link should be disabled."
                     type: integer
-                  up_time:
+                  upTime:
                     description: "The duration that the link should be enabled."
                     type: integer
-              node_selector:
+              nodeSelector:
                 description: "The configuration section that specifies the node selector that should be applied to the daemonset. Default: worker nodes."
                 type: object
                 properties:
