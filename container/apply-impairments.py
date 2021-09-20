@@ -31,11 +31,31 @@ Variables:
 Directional impairment variables:
     Uses ifb for ingress impairments (a kernel module).
     0 to disable. Default 0.
-- EGRESS_LATENCY: Outbound latency.
+- EGRESS_LATENCY: Outbound latency in ms.
+- EGRESS_JITTER_CORRELATION: The correlation between different egress jitter values.
+- EGRESS_JITTER: The amount of egress jitter in milliseconds.
+- EGRESS_JITTER_DISTRIBUTION: The type of distribution of egress jitter. Options: normal, pareto, paretonormal
+- EGRESS_REORDER: The percentage of egress packets that skip the latency (causing a reorder)
+- EGRESS_REORDER_CORRELATION: The correlation between reorder values per egress packet.
+- EGRESS_DUPLICATION: The percentage of egress packets that are duplicated.
+- EGRESS_DUPLICATION_CORRELATION: The correlation between duplication values per egress packet.
+- EGRESS_CORRUPTION: The percentage of egress packets that are to be corrupted.
+- EGRESS_CORRUPTION_CORRELATION: The correlation between corruption values per egress packet.
 - EGRESS_PACKET_LOSS: Outbound packet loss.
+- EGRESS_LOSS_CORRELATION: The correlation between packet loss values per egress packet.
 - EGRESS_BANDWIDTH_LIMIT: Outbound packet loss.
 - INGRESS_LATENCY: Inbound latency.
+- INGRESS_JITTER: The amount of ingress jitter in milliseconds.
+- INGRESS_JITTER_CORRELATION: The correlation between different ingress jitter values.
+- INGRESS_JITTER_DISTRIBUTION: The type of distribution of ingress jitter. Options: normal, pareto, paretonormal
+- INGRESS_REORDER: The percentage of packets that skip the ingress latency (causing a reorder)
+- INGRESS_REORDER_CORRELATION: The correlation between reorder values per ingress packet.
+- INGRESS_DUPLICATION: The percentage of ingress packets that are duplicated.
+- INGRESS_DUPLICATION_CORRELATION: The correlation between duplication values per ingress packet.
+- INGRESS_CORRUPTION: The percentage of ingress packets that are to be corrupted.
+- INGRESS_CORRUPTION_CORRELATION: The correlation between corruption values per ingress packet.
 - INGRESS_PACKET_LOSS: Inbound packet loss.
+- INGRESS_LOSS_CORRELATION: The correlation between packet loss values per ingress packet.
 - INGRESS_BANDWIDTH_LIMIT: Inbound packet loss.
 """
 
@@ -114,15 +134,44 @@ def parse_tc_netem_args(prefix = ""):
   in the module docstring.
   """
   args = {}
-  latency_evar = int(os.environ.get(prefix + "LATENCY", 0))
+  latency_evar = float(os.environ.get(prefix + "LATENCY", 0))
+  jitter_evar = int(os.environ.get(prefix + "JITTER", 0))
+  jitter_correlation_evar = float(os.environ.get(prefix + "JITTER_CORRELATION", 0))
+  jitter_distribution_evar = os.environ.get(prefix + "JITTER_DISTRIBUTION", "")
   packet_loss_evar = float(os.environ.get(prefix + "PACKET_LOSS", 0))
   bandwidth_limit_evar = int(os.environ.get(prefix + "BANDWIDTH_LIMIT", 0))
+  reorder_evar = float(os.environ.get(prefix + "REORDER", 0))
+  reorder_correlation_evar = float(os.environ.get(prefix + "REORDER_CORRELATION", 0))
+  duplication_evar = float(os.environ.get(prefix + "DUPLICATION", 0))
+  duplication_correlation_evar = float(os.environ.get(prefix + "DUPLICATION_CORRELATION", 0))
+  corruption_evar = float(os.environ.get(prefix + "CORRUPTION", 0))
+  corruption_correlation_evar = float(os.environ.get(prefix + "CORRUPTION_CORRELATION", 0))
+
   if latency_evar > 0:
     args["latency"] = ["delay", "{}ms".format(latency_evar)]
+    if jitter_evar > 0:
+      args["latency"].append("{}ms".format(jitter_evar))
+      if jitter_correlation_evar > 0:
+        args["latency"].append("{}%".format(jitter_correlation_evar))
+      if jitter_distribution_evar != "":
+        args["latency"].append("distribution")
+        args["latency"].append(jitter_distribution_evar)
   if packet_loss_evar > 0:
     args["packet loss"] = ["loss", "{}%".format(packet_loss_evar)]
   if bandwidth_limit_evar > 0:
     args["bandwidth limit"] = ["rate", "{}kbit".format(bandwidth_limit_evar)]
+  if corruption_evar > 0:
+    args["corruption"] = ["corrupt", "{}%".format(corruption_evar)]
+    if corruption_correlation_evar > 0:
+      args["corruption"].append("{}%".format(corruption_correlation_evar))
+  if reorder_evar > 0:
+    args["reorder"] = ["reorder", "{}%".format(reorder_evar)]
+    if corruption_correlation_evar > 0:
+      args["reorder"].append("{}%".format(reorder_correlation_evar))
+  if duplication_evar > 0:
+    args["duplication"] = ["duplicate", "{}%".format(duplication_evar)]
+    if duplication_correlation_evar > 0:
+      args["duplication"].append("{}%".format(duplication_correlation_evar))
 
   return args
 

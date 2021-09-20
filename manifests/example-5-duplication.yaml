@@ -1,17 +1,13 @@
 apiVersion: apps.redhat.com/v1alpha1
 kind: ClusterImpairment
 metadata:
-  name: uneven-latency
+  name: duplication
 spec:
   duration: 60
   startDelay: 5
   interfaces:
   - "ens3"
   ingress:
-    latency: 10 # ms
+    duplication: 25 # percent
   egress:
-    latency: 100 # ms
-  nodeSelector:
-    key: "node-role.kubernetes.io/worker"
-    value: ""
-
+    duplication: 25 # percent

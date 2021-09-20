@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 1.0.3
+VERSION ?= 1.0.4
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "preview,fast,stable")
@@ -26,15 +26,17 @@ BUNDLE_DEFAULT_CHANNEL := --default-channel=$(DEFAULT_CHANNEL)
 endif
 BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 
+USER_ORG ?= redhat-performance
+
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
-BUNDLE_IMG ?= quay.io/redhat-performance/cluster-impairment-operator-bundle:${VERSION}
+BUNDLE_IMG ?= quay.io/${USER_ORG}/cluster-impairment-operator-bundle:${VERSION}
 
 # The image for the worker
-WORKER_IMG ?= quay.io/redhat-performance/cluster-impairment-worker:${VERSION}
+WORKER_IMG ?= quay.io/${USER_ORG}/cluster-impairment-worker:${VERSION}
 
 # Image URL to use all building/pushing image targets
-IMG ?= quay.io/redhat-performance/cluster-impairment-operator:${VERSION}
+IMG ?= quay.io/${USER_ORG}/cluster-impairment-operator:${VERSION}
 
 all: docker-build
 

@@ -35,49 +35,185 @@ spec:
 {% if node_selector is defined %}
       nodeSelector:
         "{{ node_selector.key }}": "{{ node_selector.value }}"
-{% endif %}
+{% endif %} # node_selector
       containers:
         - name: impairment-worker
           image: "{{ lookup('env', 'WORKER_IMG') }}"
           env:
           - name: INTERFACE
             value: "{{ impairment_interface_list }}"
+
           # Ingress
 {% if ingress is defined %}
           # Ingress bandwidth
 {% if ingress.bandwidth is defined %}
           - name: INGRESS_BANDWIDTH_LIMIT
             value: "{{ ingress.bandwidth }}"
-{% endif %}
+{% endif %} # bandwidth
           # Ingress latency
 {% if ingress.latency is defined %}
           - name: INGRESS_LATENCY
             value: "{{ ingress.latency }}"
-{% endif %}
+          # Ingress latency_options
+{% if ingress.latency_options is defined %}
+
+{% if ingress.latency_options.jitter is defined %}
+          # jitter
+          - name: INGRESS_JITTER
+            value: "{{ ingress.latency_options.jitter }}"
+{% if ingress.latency_options.jitter_correlation is defined %}
+          # jitterCorrelation
+          - name: INGRESS_JITTER_CORRELATION
+            value: "{{ ingress.latency_options.jitter_correlation }}"
+{% endif %} # jitter_correlation
+{% endif %} # jitter
+{% if ingress.latency_options.distribution is defined %}
+          # distribution
+          - name: INGRESS_JITTER_DISTRIBUTION
+            value: "{{ ingress.latency_options.distribution }}"
+{% endif %} # distribution
+{% if ingress.latency_options.reorder is defined %}
+          # reorder
+          - name: INGRESS_REORDER
+            value: "{{ ingress.latency_options.reorder }}"
+{% endif %} # reorder
+{% if ingress.latency_options.reorder_correlation is defined %}
+          # reorder correlation
+          - name: INGRESS_REORDER_CORRELATION
+            value: "{{ ingress.latency_options.reorder_correlation }}"
+{% endif %} # reorder correlation
+{% endif %} # Latency options
+{% endif %} # Latency
+
           # Ingress packet loss
 {% if ingress.loss is defined %}
           - name: INGRESS_PACKET_LOSS
             value: "{{ ingress.loss }}"
-{% endif %}
-{% endif %}
+          # Ingress loss_options
+{% if ingress.loss_options is defined %}
+          # Ingress correlation
+{% if ingress.loss_options.correlation is defined %}
+          - name: INGRESS_LOSS_CORRELATION
+            value: "{{ ingress.loss_options.correlation }}"
+
+{% endif %} # correlation
+{% endif %} # loss options
+{% endif %} # Loss
+
+
+          # Ingress corruption
+{% if ingress.corruption is defined %}
+          - name: INGRESS_CORRUPTION
+            value: "{{ ingress.corruption }}"
+          # Ingress corelation_options
+{% if ingress.corruption_options is defined %}
+          # Ingress correlation
+{% if ingress.corruption_options.correlation is defined %}
+          - name: INGRESS_CORRUPTION_CORRELATION
+            value: "{{ ingress.corruption_options.correlation }}"
+{% endif %} # correlation
+{% endif %} # corruption_options
+{% endif %} # Corruption
+
+          # Ingress duplication
+{% if ingress.duplication is defined %}
+          - name: INGRESS_DUPLICATION
+            value: "{{ ingress.duplication }}"
+          # Ingress corelation_options
+{% if ingress.duplication_options is defined %}
+          # Ingress correlation
+{% if ingress.duplication_options.correlation is defined %}
+          - name: INGRESS_DUPLICATION_CORRELATION
+            value: "{{ ingress.duplication_options.correlation }}"
+{% endif %} # correlation
+{% endif %} # duplication_options
+{% endif %} # Duplication
+
+{% endif %} # Ingress
+
           # Egress
 {% if egress is defined %}
           # Egress bandwidth
 {% if egress.bandwidth is defined %}
           - name: EGRESS_BANDWIDTH_LIMIT
             value: "{{ egress.bandwidth }}"
-{% endif %}
+{% endif %} # Bandwidth
           # Egress latency
 {% if egress.latency is defined %}
           - name: EGRESS_LATENCY
             value: "{{ egress.latency }}"
-{% endif %}
+
+{% if egress.latency_options.jitter is defined %}
+          # jitter
+          - name: EGRESS_JITTER
+            value: "{{ egress.latency_options.jitter }}"
+{% if egress.latency_options.jitter_correlation is defined %}
+          # jitter correlation
+          - name: EGRESS_JITTER_CORRELATION
+            value: "{{ egress.latency_options.jitter_correlation }}"
+{% endif %} # jitterCorrelation
+{% endif %} # jitter
+{% if egress.latency_options.distribution is defined %}
+          # distribution
+          - name: EGRESS_JITTER_DISTRIBUTION
+            value: "{{ egress.latency_options.distribution }}"
+{% endif %} # distribution
+{% if egress.latency_options.reorder is defined %}
+          # reorder
+          - name: EGRESS_REORDER
+            value: "{{ egress.latency_options.reorder }}"
+{% endif %} # reorder
+{% if egress.latency_options.reorder_correlation is defined %}
+          # reorder correlation
+          - name: EGRESS_REORDER_CORRELATION
+            value: "{{ egress.latency_options.reorder_correlation }}"
+{% endif %} # reorderCorrelation
+{% endif %} # Latency options
+{% endif %} # Latency
+
           # Egress packet loss
 {% if egress.loss is defined %}
           - name: EGRESS_PACKET_LOSS
             value: "{{ egress.loss }}"
-{% endif %}
-{% endif %}
+          # Egress loss_options
+{% if egress.loss_options is defined %}
+          # Egress correlation
+{% if egress.loss_options.correlation is defined %}
+          - name: EGRESS_LOSS_CORRELATION
+            value: "{{ egress.loss_options.correlation }}"
+
+{% endif %} # correlation
+{% endif %} # loss options
+{% endif %} # loss
+
+
+          # Egress corruption
+{% if egress.corruption is defined %}
+          - name: EGRESS_CORRUPTION
+            value: "{{ egress.corruption }}"
+          # Egress corelation_options
+{% if egress.corruption_options is defined %}
+          # Egress correlation
+{% if egress.corruption_options.correlation is defined %}
+          - name: EGRESS_CORRUPTION_CORRELATION
+            value: "{{ egress.corruption_options.correlation }}"
+{% endif %} # correlation
+{% endif %} # corruption_options
+{% endif %} # corruption
+
+          # Egress duplication
+{% if egress.duplication is defined %}
+          - name: EGRESS_DUPLICATION
+            value: "{{ egress.duplication }}"
+          # Egress corelation_options
+{% if egress.duplication_options is defined %}
+          # Egress correlation
+{% if egress.duplication_options.correlation is defined %}
+          - name: EGRESS_DUPLICATION_CORRELATION
+            value: "{{ egress.duplication_options.correlation }}"
+{% endif %} # correlation
+{% endif %} # duplication_options
+{% endif %} # duplication
 
 # Duration or end time
           - name: START_TIME

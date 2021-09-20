@@ -4,11 +4,11 @@ metadata:
   name: two-min-flap
 spec:
   duration: 480
-  start_delay: 5
+  startDelay: 5
   interfaces:
-  - "ens2f0"
-  link_flapping:
+  - "ens3"
+  linkFlapping:
     enable: true
-    down_time: 120 # Seconds
-    up_time: 120 # Seconds
+    downTime: 12 # Seconds
+    upTime: 12 # Seconds
 

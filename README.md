@@ -13,14 +13,73 @@ Traffic Direction:
 
 ### Impairments
 
-| Impairment    | Description                             | Unit    | Uses Netem |
-|---------------|-----------------------------------------|---------|------------|
-| Bandwidth     | The bandwidth limit                     | kbit/s  | Yes        |
-| Latency       | The delay of the packets                | ms      | Yes        |
-| Packet Loss   | The percent of packets that are dropped | percent | Yes        |
-| Link Flapping | Turns the interface on and off          | bool    | No         |
+| Impairment    | Description                                | Unit    | Uses Netem | Correlation Supported |
+|---------------|--------------------------------------------|---------|------------|-----------------------|
+| Bandwidth     | The bandwidth limit                        | kbit/s  | Yes        | No                    |
+| Latency       | The delay of the packets                   | ms      | Yes        | Yes                   |
+| Packet Loss   | The percent of packets that are dropped    | percent | Yes        | Yes                   |
+| Corruption    | The percent of packets that are corrupted  | percent | Yes        | Yes                   |
+| Duplication   | The percent of packets that are duplicated | percent | Yes        | Yes                   |
+| Link Flapping | Turns the interface on and off             | bool    | No         | No                    |
 
 On the tested environment (RHEL CoreOS 48.84), the impairments can be used alongside link flapping.
+
+#### Latency Options
+
+In addition to simply delaying the packets, there are advanced latency options.
+
+**Jitter**
+
+Semi-randomly adds or subtracts from the latency according to the distribution up to the amount specified.
+If latency is 100ms, and jitter is 10ms, the actual latency will vary 100±10ms.
+
+
+**Distribution**
+
+The distribution of the jitter. The options are:
+* Normal
+* Uniform
+* Pareto
+* Paretonormal
+
+**Jitter correlation**
+
+The percent chance that the next latency's jitter value will correlate with the preceeding latency.
+
+**Reorder**
+
+The percentage of packets that are not delayed, causing a reorder due to them being sent before the delayed ones.
+Applying jitter itself has the potential to also cause reordering.
+
+**Reorder correlation**
+ 
+The percet chance that the value for the next reorder will correlate with the preceeding value.
+
+#### Loss options
+
+**Correlation**
+
+The percent chance that the previous loss value for a packet correlates with the loss value for the next packet.
+
+#### Corruption options
+
+**Corruption**
+
+The percent chance that each packet will be corrupted.
+
+**Corruption correlation**
+
+The percet chance that the value for the next corruption will correlate with the preceeding value.
+
+#### Duplication options
+
+**Duplication**
+
+The percent chance that each packet will be duplicated.
+
+**Duplication correlation**
+
+The percet chance that the value for the next duplication will correlate with the preceeding value.
 
 
 ## Configuration
@@ -33,22 +92,36 @@ metadata:
   name: test-impairment-cr
 spec:
   duration: 30 # seconds
-  start_delay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
+  startDelay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
   interfaces:
-  - "ens2f0"
+  - "ens3"
   ingress: # uses ifb
     bandwidth: 0 # kbit
     latency: 10 # ms
+    latencyOptions:
+      jitter: 5 # ms
+      jitterCorrelation: 25 # percent
+      distribution: normal
+      reorder: 25 # percent of packets that will skip the delay
+      reorderCorrelation: 25 # percent
     loss: 0 # percent
+    lossOptions:
+      correlation: 25 # percent
+    corruption: 0.1 # percent
+    corruptionOptions:
+      correlation: 25 # percent
+    duplication: 1 # percent
+    duplicationOptions:
+      correlation: 25 # percent
   egress:
     bandwidth: 0 # kbit
     latency: 100 # ms
     loss: 0 # percent
-  link_flapping:
+  linkFlapping:
     enable: false
-    down_time: 3 # Seconds
-    up_time: 3 # Seconds
-  node_selector:
+    downTime: 3 # Seconds
+    upTime: 3 # Seconds
+  nodeSelector:
     key: "node-role.kubernetes.io/worker"
     value: ""
 ```
@@ -95,9 +168,9 @@ metadata:
   name: uneven-latency
 spec:
   duration: 60
-  start_delay: 5
+  startDelay: 5
   interfaces:
-  - "ens2f0"
+  - "ens3"
   ingress:
     latency: 10 # ms
   egress:
@@ -114,17 +187,17 @@ metadata:
   name: two-min-flap
 spec:
   duration: 480
-  start_delay: 5
+  startDelay: 5
   interfaces:
-  - "ens2f0"
-  link_flapping:
+  - "ens3"
+  linkFlapping:
     enable: true
-    down_time: 120 # Seconds
-    up_time: 120 # Seconds
+    downTime: 120 # Seconds
+    upTime: 120 # Seconds
 ```
 
 **Example 3**
-In this example, a realistic set of impairments is applied to `ens2f0` and `eno1` for 30 seconds:
+In this example, a realistic set of impairments is applied to `ens3` and `eno1` for 30 seconds:
 
 ```yaml
 apiVersion: apps.redhat.com/v1alpha1
@@ -133,15 +206,16 @@ metadata:
   name: typical-scenario
 spec:
   duration: 30 # seconds
-  start_delay: 5 # seconds
+  startDelay: 5 # seconds
   interfaces:
-  - "ens2f0"
+  - "ens3"
   - "eno1"
   egress:
     latency: 50 # ms. Bidirectional, so total of 100ms
+    loss: 0.01 # percent
   ingress:
     latency: 50 # ms. Bidirectional, so total of 100ms
-  loss: 0.02 # percent
+    loss: 0.01 # percent
 ```
 
 **Example 4**
@@ -153,9 +227,9 @@ metadata:
   name: all-impairments
 spec:
   duration: 480 # seconds
-  start_delay: 5 # seconds
+  startDelay: 5 # seconds
   interfaces:
-  - "ens2f0"
+  - "ens3"
   egress:
     latency: 50 # ms. Bidirectional, so total of 100ms
     loss: 0.02 # percent
@@ -164,11 +238,29 @@ spec:
     latency: 50 # ms. Bidirectional, so total of 100ms
     loss: 0.02 # percent
     bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s
-  link_flapping:
+  linkFlapping:
     enable: true
-    down_time: 30 # Seconds
-    up_time: 120 # Seconds
+    downTime: 30 # Seconds
+    upTime: 120 # Seconds
 ```
+
+**Example 5**
+In this example, the packets are duplicated 25% of the time on ingress. In real situations it will be a very small percent; less than one percent. But this will clearly show up in ping.
+
+```yaml
+apiVersion: apps.redhat.com/v1alpha1
+kind: ClusterImpairment
+metadata:
+  name: duplication
+spec:
+  duration: 60
+  startDelay: 5
+  interfaces:
+  - "ens3"
+  ingress:
+    duplication: 25 # percent
+```
+
 
 ## Setup
 
