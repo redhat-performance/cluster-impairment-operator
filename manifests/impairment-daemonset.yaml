@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: impairment-worker
-          image: quay.io/joconnel/cluster-impairment-worker:latest
+          image: quay.io/redhat-performance/cluster-impairment-worker:latest
           env:
           - name: INTERFACE
             value: "ens3"
