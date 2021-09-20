@@ -25,6 +25,9 @@
     namespace: "{{ ansible_operator_meta.namespace }}"
   register: impairment_facts
 
+- debug:
+    var: impairment_facts
+
 - name: Set name of daemonset
   set_fact:
     daemonset_name: "cluster-impairment-daemonset-{{ ansible_operator_meta.name }}"

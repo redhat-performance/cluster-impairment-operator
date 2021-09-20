@@ -38,6 +38,7 @@ If latency is 100ms, and jitter is 10ms, the actual latency will vary 100±10ms.
 
 The distribution of the jitter. The options are:
 * Normal
+* Uniform
 * Pareto
 * Paretonormal
 
@@ -93,7 +94,7 @@ spec:
   duration: 30 # seconds
   startDelay: 5 # seconds. It typically takes about 2-3 seconds for the Daemonset to run
   interfaces:
-  - "ens2f0"
+  - "ens3"
   ingress: # uses ifb
     bandwidth: 0 # kbit
     latency: 10 # ms
@@ -107,7 +108,11 @@ spec:
     lossOptions:
       correlation: 25 # percent
     corruption: 0.1 # percent
+    corruptionOptions:
+      correlation: 25 # percent
     duplication: 1 # percent
+    duplicationOptions:
+      correlation: 25 # percent
   egress:
     bandwidth: 0 # kbit
     latency: 100 # ms
@@ -165,7 +170,7 @@ spec:
   duration: 60
   startDelay: 5
   interfaces:
-  - "ens2f0"
+  - "ens3"
   ingress:
     latency: 10 # ms
   egress:
@@ -184,7 +189,7 @@ spec:
   duration: 480
   startDelay: 5
   interfaces:
-  - "ens2f0"
+  - "ens3"
   linkFlapping:
     enable: true
     downTime: 120 # Seconds
@@ -192,7 +197,7 @@ spec:
 ```
 
 **Example 3**
-In this example, a realistic set of impairments is applied to `ens2f0` and `eno1` for 30 seconds:
+In this example, a realistic set of impairments is applied to `ens3` and `eno1` for 30 seconds:
 
 ```yaml
 apiVersion: apps.redhat.com/v1alpha1
@@ -203,13 +208,14 @@ spec:
   duration: 30 # seconds
   startDelay: 5 # seconds
   interfaces:
-  - "ens2f0"
+  - "ens3"
   - "eno1"
   egress:
     latency: 50 # ms. Bidirectional, so total of 100ms
+    loss: 0.01 # percent
   ingress:
     latency: 50 # ms. Bidirectional, so total of 100ms
-  loss: 0.02 # percent
+    loss: 0.01 # percent
 ```
 
 **Example 4**
@@ -223,7 +229,7 @@ spec:
   duration: 480 # seconds
   startDelay: 5 # seconds
   interfaces:
-  - "ens2f0"
+  - "ens3"
   egress:
     latency: 50 # ms. Bidirectional, so total of 100ms
     loss: 0.02 # percent
@@ -237,6 +243,24 @@ spec:
     downTime: 30 # Seconds
     upTime: 120 # Seconds
 ```
+
+**Example 5**
+In this example, the packets are duplicated 25% of the time on ingress. In real situations it will be a very small percent; less than one percent. But this will clearly show up in ping.
+
+```yaml
+apiVersion: apps.redhat.com/v1alpha1
+kind: ClusterImpairment
+metadata:
+  name: duplication
+spec:
+  duration: 60
+  startDelay: 5
+  interfaces:
+  - "ens3"
+  ingress:
+    duplication: 25 # percent
+```
+
 
 ## Setup
 

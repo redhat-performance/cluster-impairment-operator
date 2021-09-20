@@ -6,7 +6,7 @@ spec:
   duration: 480
   startDelay: 5
   interfaces:
-  - "ens2f0"
+  - "ens3"
   linkFlapping:
     enable: true
     downTime: 12 # Seconds

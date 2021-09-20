@@ -66,4 +66,17 @@ spec:
     enable: true
     downTime: 30 # Seconds
     upTime: 120 # Seconds
-
+---
+apiVersion: apps.redhat.com/v1alpha1
+kind: ClusterImpairment
+metadata:
+  name: duplication
+spec:
+  duration: 60
+  startDelay: 5
+  interfaces:
+  - "ens3"
+  ingress:
+    duplication: 25 # percent
+  egress:
+    duplication: 25 # percent

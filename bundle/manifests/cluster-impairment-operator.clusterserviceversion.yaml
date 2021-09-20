@@ -37,6 +37,26 @@ metadata:
           "apiVersion": "apps.redhat.com/v1alpha1",
           "kind": "ClusterImpairment",
           "metadata": {
+            "name": "duplication"
+          },
+          "spec": {
+            "duration": 60,
+            "egress": {
+              "duplication": 25
+            },
+            "ingress": {
+              "duplication": 25
+            },
+            "interfaces": [
+              "ens3"
+            ],
+            "startDelay": 5
+          }
+        },
+        {
+          "apiVersion": "apps.redhat.com/v1alpha1",
+          "kind": "ClusterImpairment",
+          "metadata": {
             "name": "two-min-flap"
           },
           "spec": {
@@ -101,13 +121,13 @@ metadata:
       ]
     capabilities: Basic Install
     categories: Networking, Developer Tools
-    containerImage: quay.io/redhat-performance/cluster-impairment-operator:1.0.3
+    containerImage: quay.io/redhat-performance/cluster-impairment-operator:1.0.4
     createdAt: "2021-08-11 12:15:00"
     description: Run Impairments on Kubernetes/Openshift Nodes
     operators.operatorframework.io/builder: operator-sdk-v1.10.0+git
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
     repository: https://github.com/redhat-performance/cluster-impairment-operator
-  name: cluster-impairment-operator.v1.0.3
+  name: cluster-impairment-operator.v1.0.4
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -120,92 +140,123 @@ spec:
     application of impairments to the nodes in a cluster.\n\n## Features\n\nTraffic
     Direction:\n\n* Egress impairments affect the traffic going out.    \n* Ingress
     impairments affect the traffic coming in. (Ingress impairments require the kernel
-    module IFB.)\n\n### Impairments\n\n| Impairment    | Description                             |
-    Unit    | Uses Netem |\n|---------------|-----------------------------------------|---------|------------|\n|
-    Bandwidth     | The bandwidth limit                     | kbit/s  | Yes        |\n|
-    Latency       | The delay of the packets                | ms      | Yes        |\n|
-    Packet Loss   | The percent of packets that are dropped | percent | Yes        |\n|
-    Link Flapping | Turns the interface on and off          | bool    | No         |\n\n\nOn
+    module IFB.)\n\n### Impairments\n\n| Impairment    | Description                                |
+    Unit    | Uses Netem | Correlation Supported |\n|---------------|--------------------------------------------|---------|------------|-----------------------|\n|
+    Bandwidth     | The bandwidth limit                        | kbit/s  | Yes        |
+    No                    |\n| Latency       | The delay of the packets                   |
+    ms      | Yes        | Yes                   |\n| Packet Loss   | The percent
+    of packets that are dropped    | percent | Yes        | Yes                   |\n|
+    Corruption    | The percent of packets that are corrupted  | percent | Yes        |
+    Yes                   |\n| Duplication   | The percent of packets that are duplicated
+    | percent | Yes        | Yes                   |\n| Link Flapping | Turns the
+    interface on and off             | bool    | No         | No                    |\n\n\nOn
     the tested environment (RHEL CoreOS 48.84), the impairments can be used alongside
-    link flapping.\n\n\n## Configuration\n\nHere is an example of the ClusterImpairment
-    custom resource.\n\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind: ClusterImpairment\nmetadata:\n
-    \ name: test-impairment-cr\nspec:\n  duration: 30 # seconds\n  startDelay: 5 #
-    seconds. It typically takes about 2-3 seconds for the Daemonset to run\n  interfaces:\n
-    \ - \"ens2f0\"\n  ingress: # uses ifb\n    bandwidth: 0 # kbit\n    latency: 10
-    # ms\n    loss: 0 # percent\n  egress:\n    bandwidth: 0 # kbit\n    latency:
-    100 # ms\n    loss: 0 # percent\n  linkFlapping:\n    enable: false\n    downTime:
-    3 # Seconds\n    upTime: 3 # Seconds\n  nodeSelector:\n    key: \"node-role.kubernetes.io/worker\"\n
-    \   value: \"\"\n    \n```\n\n#### Interfaces\n\nThe interfaces configuration
-    option is a list of all interfaces that the impairments should be applied to.
-    The current implementation will error out once it hits an invalid interface.\n\nIf
-    an invalid interface is found, it will print out the list of interfaces.\n\n####
-    Node Selector\n\nThe default node selector is all worker nodes, but you can change
-    it to whatever node selector you want by setting the key and value.\nThere is
-    a toleration to allow it to run on master nodes if the node selector includes
-    master nodes.\n\n#### Duration\n\nThe number of seconds the impairments should
-    run. It will try to sync the start and end time between all pods.\nIf set to -1,
-    it will run indefinitely (a year), until you remove the ClusterImpairment custom
-    resource. This is good for testing that requires steady impairments.\n\nIf the
-    script is link flapping, set this value to be short enough so that if the link
-    flap interrupts communication between the nodes, the daemonset will remove itself.\n\n####
-    Start Delay\n\nThe delay before starting the script. If you want the pods to be
-    in sync, a minimum of a few seconds should be used because the pods take time
-    to start up.\n\nYou can also utilize this feature to run an separate impairment
-    after another. Just apply two resources at the same time, but add the duration
-    and start delay of the first to the start delay of the second.\n\n#### Ingress
-    and Egress\n\nThe configuration sections \"ingress\" and \"egress\" apply to each
-    direction.\n\n##### Examples:\n\n**Example 1**\n\n\nIn this example, egress latency
-    is set to 100ms, but the ingress latency is set to 10ms. So the latency to the
-    interface will end up being 10ms, but 100ms going out. When pinging, this will
-    result in 110ms of latency.\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind:
-    ClusterImpairment\nmetadata:\n  name: uneven-latency\nspec:\n  duration: 60\n
-    \ startDelay: 5\n  interfaces:\n  - \"ens2f0\"\n  ingress:\n    latency: 10 #
-    ms\n  egress:\n    latency: 100 # ms\n\n```\n\n**Example 2**\n\n\nIn this example,
-    link flapping will be enabled, and it will turn the interface on and off every
-    2 minutes. That is long enough for kubernetes to determine that a node is unavailable.\n\n```\n\napiVersion:
+    link flapping.\n\n\n#### Latency Options\n\nIn addition to simply delaying the
+    packets, there are advanced latency options.\n\n##### Jitter\n\nSemi-randomly
+    adds or subtracts from the latency according to the distribution up to the amount
+    specified.\nIf latency is 100ms, and jitter is 10ms, the actual latency will vary
+    100±10ms.\n\n\n##### Distribution\n\nThe distribution of the jitter. The options
+    are:\n* Normal\n* Uniform\n* Pareto\n* Paretonormal\n\n##### Jitter correlation\n\nThe
+    percent chance that the next latency's jitter value will correlate with the preceeding
+    latency.\n\n##### Reorder\n\nThe percentage of packets that are not delayed, causing
+    a reorder due to them being sent before the delayed ones.\nApplying jitter itself
+    has the potential to also cause reordering.\n\n##### Reorder correlation\n\nThe
+    percet chance that the value for the next reorder will correlate with the preceeding
+    value.\n\n#### Loss options\n\n##### Correlation\n\nThe percent chance that the
+    previous loss value for a packet correlates with the loss value for the next packet.\n\n####
+    Corruption options\n\n###### Corruption\n\nThe percent chance that each packet
+    will be corrupted.\n\n##### Corruption correlation\n\nThe percet chance that the
+    value for the next corruption will correlate with the preceeding value.\n\n####
+    Duplication options\n\n##### Duplication\n\nThe percent chance that each packet
+    will be duplicated.\n\n##### Duplication correlation\n\nThe percet chance that
+    the value for the next duplication will correlate with the preceeding value.\n\n\n\n##
+    Configuration\n\nHere is an example of the ClusterImpairment custom resource.\n\n\n```\n\napiVersion:
+    apps.redhat.com/v1alpha1\nkind: ClusterImpairment\nmetadata:\n  name: test-impairment-cr\nspec:\n
+    \ duration: 30 # seconds\n  startDelay: 5 # seconds. It typically takes about
+    2-3 seconds for the Daemonset to run\n  interfaces:\n  - \"ens2f0\"\n  ingress:
+    # uses ifb\n    bandwidth: 0 # kbit\n    latency: 10 # ms\n    latencyOptions:\n
+    \     jitter: 5 # ms\n      jitterCorrelation: 25 # percent\n      distribution:
+    normal\n      reorder: 25 # percent of packets that will skip the delay\n      reorderCorrelation:
+    25 # percent\n    loss: 0 # percent\n    lossOptions:\n      correlation: 25 #
+    percent\n    corruption: 0.1 # percent\n    corruptionOptions:\n      correlation:
+    25 # percent\n    duplication: 1 # percent\n    duplicationOptions:\n      correlation:
+    25 # percent\n  egress:\n    bandwidth: 0 # kbit\n    latency: 100 # ms\n    loss:
+    0 # percent\n  linkFlapping:\n    enable: false\n    downTime: 3 # Seconds\n    upTime:
+    3 # Seconds\n  nodeSelector:\n    key: \"node-role.kubernetes.io/worker\"\n    value:
+    \"\"\n    \n```\n\n#### Interfaces\n\nThe interfaces configuration option is a
+    list of all interfaces that the impairments should be applied to. The current
+    implementation will error out once it hits an invalid interface.\n\nIf an invalid
+    interface is found, it will print out the list of interfaces.\n\n#### Node Selector\n\nThe
+    default node selector is all worker nodes, but you can change it to whatever node
+    selector you want by setting the key and value.\nThere is a toleration to allow
+    it to run on master nodes if the node selector includes master nodes.\n\n####
+    Duration\n\nThe number of seconds the impairments should run. It will try to sync
+    the start and end time between all pods.\nIf set to -1, it will run indefinitely
+    (a year), until you remove the ClusterImpairment custom resource. This is good
+    for testing that requires steady impairments.\n\nIf the script is link flapping,
+    set this value to be short enough so that if the link flap interrupts communication
+    between the nodes, the daemonset will remove itself.\n\n#### Start Delay\n\nThe
+    delay before starting the script. If you want the pods to be in sync, a minimum
+    of a few seconds should be used because the pods take time to start up.\n\nYou
+    can also utilize this feature to run an separate impairment after another. Just
+    apply two resources at the same time, but add the duration and start delay of
+    the first to the start delay of the second.\n\n#### Ingress and Egress\n\nThe
+    configuration sections \"ingress\" and \"egress\" apply to each direction.\n\n#####
+    Examples:\n\n##### Example 1\n\n\nIn this example, egress latency is set to 100ms,
+    but the ingress latency is set to 10ms. So the latency to the interface will end
+    up being 10ms, but 100ms going out. When pinging, this will result in 110ms of
+    latency.\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind: ClusterImpairment\nmetadata:\n
+    \ name: uneven-latency\nspec:\n  duration: 60\n  startDelay: 5\n  interfaces:\n
+    \ - \"ens2f0\"\n  ingress:\n    latency: 10 # ms\n  egress:\n    latency: 100
+    # ms\n\n```\n\n##### Example 2\n\n\nIn this example, link flapping will be enabled,
+    and it will turn the interface on and off every 2 minutes. That is long enough
+    for kubernetes to determine that a node is unavailable.\n\n```\n\napiVersion:
     apps.redhat.com/v1alpha1\nkind: ClusterImpairment\nmetadata:\n  name: two-min-flap\nspec:\n
     \ duration: 480\n  startDelay: 5\n  interfaces:\n  - \"ens2f0\"\n  linkFlapping:\n
-    \   enable: true\n    downTime: 120 # Seconds\n    upTime: 120 # Seconds\n\n```\n\n**Example
-    3**\n\n\nIn this example, a realistic set of impairments is applied to `ens2f0`
+    \   enable: true\n    downTime: 120 # Seconds\n    upTime: 120 # Seconds\n\n```\n\n#####
+    Example 3\n\n\nIn this example, a realistic set of impairments is applied to `ens2f0`
     and `eno1` for 30 seconds:\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind:
     ClusterImpairment\nmetadata:\n  name: typical-scenario\nspec:\n  duration: 30
     # seconds\n  startDelay: 5 # seconds\n  interfaces:\n  - \"ens2f0\"\n  - \"eno1\"\n
     \ egress:\n    latency: 50 # ms. Bidirectional, so total of 100ms\n  ingress:\n
-    \   latency: 50 # ms. Bidirectional, so total of 100ms\n  loss: 0.02 # percent\n\n```\n\n**Example
-    4**\n\n\nIn this example, a combination of latency, packet loss, bandwidth, and
-    link flapping is applied.\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind:
+    \   latency: 50 # ms. Bidirectional, so total of 100ms\n  loss: 0.02 # percent\n\n```\n\n#####
+    Example 4\n\n\nIn this example, a combination of latency, packet loss, bandwidth,
+    and link flapping is applied.\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind:
     ClusterImpairment\nmetadata:\n  name: all-impairments\nspec:\n  duration: 480
     # seconds\n  startDelay: 5 # seconds\n  interfaces:\n  - \"ens2f0\"\n  egress:\n
     \   latency: 50 # ms. Bidirectional, so total of 100ms\n    loss: 0.02 # percent\n
     \   bandwidth: 1000 # 1000 kbit/s, about 1 mbit/s\n  ingress:\n    latency: 50
     # ms. Bidirectional, so total of 100ms\n    loss: 0.02 # percent\n    bandwidth:
     1000 # 1000 kbit/s, about 1 mbit/s\n  linkFlapping:\n    enable: true\n    downTime:
-    30 # Seconds\n    upTime: 120 # Seconds\n\n```\n\n## Setup\n\n### Requirements\n\n1.
-    You need `make` installed.\n2. You need access to the kubernetes cluster with
-    a kubeconfig.\n\n### Installation\n\nTo run using the current latest image:\n1.
-    Clone the repository.\n2. Run `make deploy` with KUBECONFIG environment variable
-    set to the location of the kubeconfig.\n\nTo run with your own code, there are
-    more steps.\n1. Fork the repository.\n2. Clone to a machine that has access to
-    the Kubernetes cluster and the kubeconfig.\n3. Modify the makefile to change the
-    `IMG` variable to your image repository. If you do not have podman installed,
-    also change podman to docker.\n4. Run `make docker-build` then `make docker-push`.\n5.
-    Then run `make deploy`\n\n### Deploying from operator-hub\n\n*Important* You must
-    manually apply the serviceaccount!\n\nFirst, Follow the instructions on this site
-    to deploy from here.\n\nNext, apply the manifest \"serviceaccount.yaml\" from
-    the manifests folder.\n\nThen you can apply your ClusterImpairment resources.\n\n##
-    Running impairments\n\nFirst, configure a ClusterImpairment type's spec with the
-    information for the impairment you want to run. Most importantly, set the interface(s).
-    You can list the interfaces with `ifconfig`. If an invalid interface is set, the
-    pod's logs will show `ifconfig` output.\n\n\nOnce the clusterimpairment type is
-    set, apply it and it will work.\n\n\nTo re-run an impairment, delete the impairment
-    with `oc delete -f path/to/manifest.yaml`, then apply it again.\n\n\n## Limitations\n\n\n###
-    Multiple Impairments\n\n\nYou should avoid any configurations that apply impairments
-    to the same interface on the same node. There are potential conflicts. The worker
-    pod will attempt to remove all impairments on that interface before applying new
-    ones.\n\n\nInstead, take advantage of the full control of both ingress and egress
-    impairments from within the same ClusterImpairment resource.\n\n\nThere is currently
-    a configured limit of 20 ClusterImpairment resources working at the same time.
-    If that is a limitation for your use case, you can change it in `config/manager/manager.yaml`
+    30 # Seconds\n    upTime: 120 # Seconds\n\n```\n\n##### Example 5\n\n\nIn this
+    example, packet duplicaiton is applied.\n\n\n```\n\napiVersion: apps.redhat.com/v1alpha1\nkind:
+    ClusterImpairment\nmetadata:\n  name: duplication\nspec:\n  duration: 60\n  startDelay:
+    5\n  interfaces:\n  - \"ens3\"\n  ingress:\n    duplication: 25 # percent\n  egress:\n
+    \   duplication: 25 # percent\n\n```\n\n## Setup\n\n### Requirements\n\n1. You
+    need `make` installed.\n2. You need access to the kubernetes cluster with a kubeconfig.\n\n###
+    Installation\n\nTo run using the current latest image:\n1. Clone the repository.\n2.
+    Run `make deploy` with KUBECONFIG environment variable set to the location of
+    the kubeconfig.\n\nTo run with your own code, there are more steps.\n1. Fork the
+    repository.\n2. Clone to a machine that has access to the Kubernetes cluster and
+    the kubeconfig.\n3. Modify the makefile to change the `IMG` variable to your image
+    repository. If you do not have podman installed, also change podman to docker.\n4.
+    Run `make docker-build` then `make docker-push`.\n5. Then run `make deploy`\n\n###
+    Deploying from operator-hub\n\n*Important* You must manually apply the serviceaccount!\n\nFirst,
+    Follow the instructions on this site to deploy from here.\n\nNext, apply the manifest
+    \"serviceaccount.yaml\" from the manifests folder.\n\nThen you can apply your
+    ClusterImpairment resources.\n\n## Running impairments\n\nFirst, configure a ClusterImpairment
+    type's spec with the information for the impairment you want to run. Most importantly,
+    set the interface(s). You can list the interfaces with `ifconfig`. If an invalid
+    interface is set, the pod's logs will show `ifconfig` output.\n\n\nOnce the clusterimpairment
+    type is set, apply it and it will work.\n\n\nTo re-run an impairment, delete the
+    impairment with `oc delete -f path/to/manifest.yaml`, then apply it again.\n\n\n##
+    Limitations\n\n\n### Multiple Impairments\n\n\nYou should avoid any configurations
+    that apply impairments to the same interface on the same node. There are potential
+    conflicts. The worker pod will attempt to remove all impairments on that interface
+    before applying new ones.\n\n\nInstead, take advantage of the full control of
+    both ingress and egress impairments from within the same ClusterImpairment resource.\n\n\nThere
+    is currently a configured limit of 20 ClusterImpairment resources working at the
+    same time. If that is a limitation for your use case, you can change it in `config/manager/manager.yaml`
     or you can try to find a way to make each ClusterImpairment do more.\n\n### Traffic
     Control (TC)\n\nTraffic control is how cluster-impairment-operator applies the
     latency, bandwidth, and packet loss impairments. The limitation is due to Linux
@@ -342,7 +393,7 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.namespace
-                image: quay.io/redhat-performance/cluster-impairment-operator:1.0.3
+                image: quay.io/redhat-performance/cluster-impairment-operator:1.0.4
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -426,4 +477,4 @@ spec:
   minKubeVersion: 1.16.0
   provider:
     name: Red Hat Performance
-  version: 1.0.3
+  version: 1.0.4

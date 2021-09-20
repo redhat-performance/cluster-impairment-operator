@@ -10,15 +10,76 @@
 
     ### Impairments
 
-    | Impairment    | Description                             | Unit    | Uses Netem |
-    |---------------|-----------------------------------------|---------|------------|
-    | Bandwidth     | The bandwidth limit                     | kbit/s  | Yes        |
-    | Latency       | The delay of the packets                | ms      | Yes        |
-    | Packet Loss   | The percent of packets that are dropped | percent | Yes        |
-    | Link Flapping | Turns the interface on and off          | bool    | No         |
+    | Impairment    | Description                                | Unit    | Uses Netem | Correlation Supported |
+    |---------------|--------------------------------------------|---------|------------|-----------------------|
+    | Bandwidth     | The bandwidth limit                        | kbit/s  | Yes        | No                    |
+    | Latency       | The delay of the packets                   | ms      | Yes        | Yes                   |
+    | Packet Loss   | The percent of packets that are dropped    | percent | Yes        | Yes                   |
+    | Corruption    | The percent of packets that are corrupted  | percent | Yes        | Yes                   |
+    | Duplication   | The percent of packets that are duplicated | percent | Yes        | Yes                   |
+    | Link Flapping | Turns the interface on and off             | bool    | No         | No                    |
 
 
     On the tested environment (RHEL CoreOS 48.84), the impairments can be used alongside link flapping.
+
+
+    #### Latency Options
+
+    In addition to simply delaying the packets, there are advanced latency options.
+
+    ##### Jitter
+
+    Semi-randomly adds or subtracts from the latency according to the distribution up to the amount specified.
+    If latency is 100ms, and jitter is 10ms, the actual latency will vary 100±10ms.
+
+
+    ##### Distribution
+
+    The distribution of the jitter. The options are:
+    * Normal
+    * Uniform
+    * Pareto
+    * Paretonormal
+
+    ##### Jitter correlation
+
+    The percent chance that the next latency's jitter value will correlate with the preceeding latency.
+
+    ##### Reorder
+
+    The percentage of packets that are not delayed, causing a reorder due to them being sent before the delayed ones.
+    Applying jitter itself has the potential to also cause reordering.
+
+    ##### Reorder correlation
+
+    The percet chance that the value for the next reorder will correlate with the preceeding value.
+
+    #### Loss options
+
+    ##### Correlation
+
+    The percent chance that the previous loss value for a packet correlates with the loss value for the next packet.
+
+    #### Corruption options
+
+    ###### Corruption
+
+    The percent chance that each packet will be corrupted.
+
+    ##### Corruption correlation
+
+    The percet chance that the value for the next corruption will correlate with the preceeding value.
+
+    #### Duplication options
+
+    ##### Duplication
+
+    The percent chance that each packet will be duplicated.
+
+    ##### Duplication correlation
+
+    The percet chance that the value for the next duplication will correlate with the preceeding value.
+
 
 
     ## Configuration
@@ -40,7 +101,21 @@
       ingress: # uses ifb
         bandwidth: 0 # kbit
         latency: 10 # ms
+        latencyOptions:
+          jitter: 5 # ms
+          jitterCorrelation: 25 # percent
+          distribution: normal
+          reorder: 25 # percent of packets that will skip the delay
+          reorderCorrelation: 25 # percent
         loss: 0 # percent
+        lossOptions:
+          correlation: 25 # percent
+        corruption: 0.1 # percent
+        corruptionOptions:
+          correlation: 25 # percent
+        duplication: 1 # percent
+        duplicationOptions:
+          correlation: 25 # percent
       egress:
         bandwidth: 0 # kbit
         latency: 100 # ms
@@ -85,7 +160,7 @@
 
     ##### Examples:
 
-    **Example 1**
+    ##### Example 1
     
     
     In this example, egress latency is set to 100ms, but the ingress latency is set to 10ms. So the latency to the interface will end up being 10ms, but 100ms going out. When pinging, this will result in 110ms of latency.
@@ -108,7 +183,7 @@
 
     ```
 
-    **Example 2**
+    ##### Example 2
     
     
     In this example, link flapping will be enabled, and it will turn the interface on and off every 2 minutes. That is long enough for kubernetes to determine that a node is unavailable.
@@ -131,7 +206,7 @@
 
     ```
 
-    **Example 3**
+    ##### Example 3
     
     
     In this example, a realistic set of impairments is applied to `ens2f0` and `eno1` for 30 seconds:
@@ -156,7 +231,7 @@
 
     ```
 
-    **Example 4**
+    ##### Example 4
     
     
     In this example, a combination of latency, packet loss, bandwidth, and link flapping is applied.
@@ -184,6 +259,30 @@
         enable: true
         downTime: 30 # Seconds
         upTime: 120 # Seconds
+
+    ```
+
+    ##### Example 5
+    
+    
+    In this example, packet duplicaiton is applied.
+
+
+    ```
+
+    apiVersion: apps.redhat.com/v1alpha1
+    kind: ClusterImpairment
+    metadata:
+      name: duplication
+    spec:
+      duration: 60
+      startDelay: 5
+      interfaces:
+      - "ens3"
+      ingress:
+        duplication: 25 # percent
+      egress:
+        duplication: 25 # percent
 
     ```
 

@@ -62,10 +62,56 @@ spec:
                     type: integer
                   latency:
                     description: "The latency applied in ms"
-                    type: integer
+                    type: number
+                  latencyOptions:
+                    description: "Advanced latency options. Example: jitter"
+                    type: object
+                    properties:
+                      jitter:
+                        description: "Variation in the latency that follows the specified distribution."
+                        type: number
+                      jitterCorrelation:
+                        description: "The correlation between sequential jitter values"
+                        type: number
+                      distribution:
+                        description: "The way the jitter is distributed. Options: Normal, Uniform, Pareto, Paretonormal"
+                        type: string
+                      reorder:
+                        description: "The percentage of packets that are not delayed, causing reordering"
+                        type: number
+                      reorderCorrelation:
+                        description: "The correlation between sequential reorder values"
+                        type: number
                   loss:
                     description: "The packet loss in percent"
                     type: number
+                  lossOptions:
+                    description: "Advanced packet loss options"
+                    type: object
+                    properties:
+                      correlation:
+                        type: number
+                        description: "The correlation between sequential packet loss values"
+                  corruption:
+                    description: "The percent of packets that are corrupted"
+                    type: number
+                  corruptionOptions:
+                    description: "Advanced corruption options"
+                    type: object
+                    properties:
+                      correlation:
+                        type: number
+                        description: "The correlation between sequential corruption values"
+                  duplication:
+                    description: "The percent of packets duplicated"
+                    type: number
+                  duplicationOptions:
+                    description: "Advanced duplication options"
+                    type: object
+                    properties:
+                      correlation:
+                        type: number
+                        description: "The correlation between sequential duplication values"
               egress:
                 description: "The configuration section that specifies the egress impairments."
                 type: object
@@ -75,10 +121,56 @@ spec:
                     type: integer
                   latency:
                     description: "The latency applied in ms"
-                    type: integer
+                    type: number
+                  latencyOptions:
+                    description: "Advanced latency options. Example: jitter"
+                    type: object
+                    properties:
+                      jitter:
+                        description: "Variation in the latency that follows the specified distribution."
+                        type: number
+                      jitterCorrelation:
+                        description: "The correlation between sequential jitter values"
+                        type: number
+                      distribution:
+                        description: "The way the jitter is distributed. Options: Normal, Uniform, Pareto, Paretonormal"
+                        type: string
+                      reorder:
+                        description: "The percentage of packets that are not delayed, causing reordering"
+                        type: number
+                      reorderCorrelation:
+                        description: "The correlation between sequential reorder values"
+                        type: number
                   loss:
                     description: "The packet loss in percent"
                     type: number
+                  lossOptions:
+                    description: "Advanced packet loss options"
+                    type: object
+                    properties:
+                      correlation:
+                        type: number
+                        description: "The correlation between sequential packet loss values"
+                  corruption:
+                    description: "The percent of packets that are corrupted"
+                    type: number
+                  corruptionOptions:
+                    description: "Advanced corruption options"
+                    type: object
+                    properties:
+                      correlation:
+                        type: number
+                        description: "The correlation between sequential corruption values"
+                  duplication:
+                    description: "The percent of packets duplicated"
+                    type: number
+                  duplicationOptions:
+                    description: "Advanced duplication options"
+                    type: object
+                    properties:
+                      correlation:
+                        type: number
+                        description: "The correlation between sequential duplication values"
               linkFlapping:
                 description: "The configuration section that specifies the link flapping impairments."
                 type: object

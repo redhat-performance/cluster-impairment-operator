@@ -7,7 +7,7 @@ spec:
   startDelay: 5 # seconds
   interfaces:
   - "ens2f0"
-  - "eno1"
+  - "ens3"
   egress:
     latency: 50 # ms. Bidirectional, so total of 100ms
   ingress:

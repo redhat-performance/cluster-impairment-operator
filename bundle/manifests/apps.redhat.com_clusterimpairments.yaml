@@ -50,12 +50,64 @@ spec:
                   bandwidth:
                     description: The bandwidth limit in kbit/sec
                     type: integer
+                  corruption:
+                    description: The percent of packets that are corrupted
+                    type: number
+                  corruptionOptions:
+                    description: Advanced corruption options
+                    properties:
+                      correlation:
+                        description: The correlation between sequential corruption
+                          values
+                        type: number
+                    type: object
+                  duplication:
+                    description: The percent of packets duplicated
+                    type: number
+                  duplicationOptions:
+                    description: Advanced duplication options
+                    properties:
+                      correlation:
+                        description: The correlation between sequential duplication
+                          values
+                        type: number
+                    type: object
                   latency:
                     description: The latency applied in ms
-                    type: integer
+                    type: number
+                  latencyOptions:
+                    description: 'Advanced latency options. Example: jitter'
+                    properties:
+                      distribution:
+                        description: 'The way the jitter is distributed. Options:
+                          Normal, Uniform, Pareto, Paretonormal'
+                        type: string
+                      jitter:
+                        description: Variation in the latency that follows the specified
+                          distribution.
+                        type: number
+                      jitterCorrelation:
+                        description: The correlation between sequential jitter values
+                        type: number
+                      reorder:
+                        description: The percentage of packets that are not delayed,
+                          causing reordering
+                        type: number
+                      reorderCorrelation:
+                        description: The correlation between sequential reorder values
+                        type: number
+                    type: object
                   loss:
                     description: The packet loss in percent
                     type: number
+                  lossOptions:
+                    description: Advanced packet loss options
+                    properties:
+                      correlation:
+                        description: The correlation between sequential packet loss
+                          values
+                        type: number
+                    type: object
                 type: object
               ingress:
                 description: The configuration section that specifies the ingress
@@ -64,12 +116,64 @@ spec:
                   bandwidth:
                     description: The bandwidth limit in kbit/sec
                     type: integer
+                  corruption:
+                    description: The percent of packets that are corrupted
+                    type: number
+                  corruptionOptions:
+                    description: Advanced corruption options
+                    properties:
+                      correlation:
+                        description: The correlation between sequential corruption
+                          values
+                        type: number
+                    type: object
+                  duplication:
+                    description: The percent of packets duplicated
+                    type: number
+                  duplicationOptions:
+                    description: Advanced duplication options
+                    properties:
+                      correlation:
+                        description: The correlation between sequential duplication
+                          values
+                        type: number
+                    type: object
                   latency:
                     description: The latency applied in ms
-                    type: integer
+                    type: number
+                  latencyOptions:
+                    description: 'Advanced latency options. Example: jitter'
+                    properties:
+                      distribution:
+                        description: 'The way the jitter is distributed. Options:
+                          Normal, Uniform, Pareto, Paretonormal'
+                        type: string
+                      jitter:
+                        description: Variation in the latency that follows the specified
+                          distribution.
+                        type: number
+                      jitterCorrelation:
+                        description: The correlation between sequential jitter values
+                        type: number
+                      reorder:
+                        description: The percentage of packets that are not delayed,
+                          causing reordering
+                        type: number
+                      reorderCorrelation:
+                        description: The correlation between sequential reorder values
+                        type: number
+                    type: object
                   loss:
                     description: The packet loss in percent
                     type: number
+                  lossOptions:
+                    description: Advanced packet loss options
+                    properties:
+                      correlation:
+                        description: The correlation between sequential packet loss
+                          values
+                        type: number
+                    type: object
                 type: object
               interfaces:
                 description: All interfaces that the impairments should be applied
